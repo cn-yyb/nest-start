@@ -70,6 +70,7 @@ export class UserService {
       VALUES
         ('${accountName}', '${realName}', '${hashPwd}', '${salt}', '${mobile}', 1, 3, 0)
     `;
+
     try {
       await sequelize.query(registerSQL, { logging: false });
       return {
