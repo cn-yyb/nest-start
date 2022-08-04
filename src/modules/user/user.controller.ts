@@ -2,8 +2,6 @@ import {
   Body,
   Controller,
   Get,
-  HttpCode,
-  HttpStatus,
   Post,
   Res,
   UseGuards,
@@ -14,7 +12,7 @@ import { UserService } from './user.service';
 import { Response } from 'express';
 import { AuthService } from '../auth/auth.service';
 import { AuthGuard } from '@nestjs/passport';
-import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ValidationPipe } from '@/pipe/validation.pipe';
 
 @ApiBearerAuth() // Swagger 的 JWT 验证
@@ -42,6 +40,7 @@ export class UserController {
     return this.userService.getUserList();
   }
 
+  @ApiOperation({ summary: '用户登录' })
   @ApiBody({
     description: '用户注册',
     type: RegisterUserDto,
@@ -58,6 +57,7 @@ export class UserController {
     return this.userService.findOne(body.username);
   }
 
+  @ApiOperation({ summary: '用户登录' })
   @ApiBody({
     description: '用户登录',
     type: LoginDto,

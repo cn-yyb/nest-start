@@ -23,6 +23,7 @@ specifiers:
   eslint: ^8.0.1
   eslint-config-prettier: ^8.3.0
   eslint-plugin-prettier: ^4.0.0
+  express: ^4.18.1
   jest: 28.0.3
   lodash: ^4.17.21
   log4js: ^6.6.1
@@ -57,6 +58,7 @@ dependencies:
   chalk: 4.1.2
   class-transformer: 0.5.1
   class-validator: 0.13.2
+  express: 4.18.1
   lodash: 4.17.21
   log4js: 6.6.1
   moment: 2.29.4
@@ -70,7 +72,7 @@ dependencies:
   sequelize: 6.21.3_mysql2@2.3.3
   sequelize-typescript: 2.1.3_gf3rn6o3glmrmutgg6tcezvvuq
   stacktrace-js: 2.0.2
-  swagger-ui-express: 4.5.0
+  swagger-ui-express: 4.5.0_express@4.18.1
 
 devDependencies:
   '@nestjs/cli': 8.2.8
@@ -4906,12 +4908,13 @@ packages:
     resolution: {integrity: sha512-jHL6UyIYpvEI7NsuWd0R3hJaPQTg6Oo4qSBo+oVfOEkv6rrQm/475RGSMmZgV6ajp+Sgrp9CqrDjQYAgQqiv1A==}
     dev: false
 
-  /swagger-ui-express/4.5.0:
+  /swagger-ui-express/4.5.0_express@4.18.1:
     resolution: {integrity: sha512-DHk3zFvsxrkcnurGvQlAcLuTDacAVN1JHKDgcba/gr2NFRE4HGwP1YeHIXMiGznkWR4AeS7X5vEblNn4QljuNA==}
     engines: {node: '>= v0.10.32'}
     peerDependencies:
       express: '>=4.0.0'
     dependencies:
+      express: 4.18.1
       swagger-ui-dist: 4.13.2
     dev: false
 

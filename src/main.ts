@@ -7,11 +7,15 @@ import { TransformInterceptor } from './interceptor/transform.interceptor';
 import { logger } from './middleware/logger.middleware';
 // swagger
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-
-const PORT = 8888;
+import { PORT, ROUTE_PREFIX } from './constants/server.content';
+import { Logger } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  // 开启跨域访问
+  app.enableCors({ origin: '*', credentials: true });
+  // todo 设置全局路由前缀
+  app.setGlobalPrefix(ROUTE_PREFIX);
   // 解析处理 json & 表单数据
   app.use(express.json()); // For parsing application/json
   app.use(express.urlencoded({ extended: true })); // For parsing application/x-www-form-urlencoded
@@ -19,8 +23,6 @@ async function bootstrap() {
   app.use(logger);
   // 全局拦截器拦截器
   app.useGlobalInterceptors(new TransformInterceptor());
-  // todo 设置全局路由前缀
-  // app.setGlobalPrefix('api/v1');
   // 全部异常捕获过滤器
   app.useGlobalFilters(new AllExceptionsFilter());
   // 过滤处理 HTTP 异常
@@ -29,7 +31,7 @@ async function bootstrap() {
   // 配置 Swagger
   const options = new DocumentBuilder()
     .addBearerAuth() // 开启 BearerAuth 授权认证
-    .setTitle('Nest zero to one')
+    .setTitle('Nest 接口文档')
     .setDescription('The nest-zero-to-one API description')
     .setVersion('1.0')
     .addTag('test')
@@ -43,7 +45,9 @@ async function bootstrap() {
 
   // server start
   await app.listen(PORT, () => {
-    console.log(`The server has been runing at http://127.0.0.1:${PORT}`);
+    Logger.log(
+      `The server has been runing at http://127.0.0.1:${PORT}, api-doc: http://127.0.0.1:${PORT}/api-doc`,
+    );
   });
 }
 bootstrap();
