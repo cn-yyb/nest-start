@@ -52,6 +52,7 @@ export class UserService {
       return {
         code: 400,
         msg: '两次密码输入不一致',
+        data: null,
       };
     }
     const user = await this.findOne(accountName);
@@ -59,6 +60,7 @@ export class UserService {
       return {
         code: 400,
         msg: '用户已存在',
+        data: null,
       };
     }
 

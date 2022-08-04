@@ -15,7 +15,7 @@ export class AuthService {
     const user = await this.userService.findOne(username);
     if (user) {
       const { password: pw, salt } = user;
-      console.log(user);
+      // console.log(user);
       if (pw === encryptPassword(password, salt)) {
         return {
           code: 1,
@@ -45,6 +45,7 @@ export class AuthService {
     try {
       return {
         code: 1,
+        msg: 'Success',
         data: {
           token: this.jwtService.sign(payload),
         },

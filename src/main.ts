@@ -5,6 +5,8 @@ import { AllExceptionsFilter } from './filter/any-exception.filter';
 import { HttpExceptionFilter } from './filter/http-exception.filter';
 import { TransformInterceptor } from './interceptor/transform.interceptor';
 import { logger } from './middleware/logger.middleware';
+// swagger
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
 const PORT = 8888;
 
@@ -23,6 +25,21 @@ async function bootstrap() {
   app.useGlobalFilters(new AllExceptionsFilter());
   // 过滤处理 HTTP 异常
   app.useGlobalFilters(new HttpExceptionFilter());
+
+  // 配置 Swagger
+  const options = new DocumentBuilder()
+    .addBearerAuth() // 开启 BearerAuth 授权认证
+    .setTitle('Nest zero to one')
+    .setDescription('The nest-zero-to-one API description')
+    .setVersion('1.0')
+    .addTag('test')
+    .build();
+
+  SwaggerModule.setup(
+    'api-doc',
+    app,
+    SwaggerModule.createDocument(app, options),
+  );
 
   // server start
   await app.listen(PORT, () => {
