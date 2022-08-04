@@ -5,7 +5,6 @@ import {
   HttpException,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
-import * as _ from 'lodash';
 import { Logger } from '../utils/log4js';
 
 @Catch(HttpException)

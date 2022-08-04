@@ -3,13 +3,11 @@ import {
   Controller,
   Get,
   Post,
-  Res,
   UseGuards,
   UsePipes,
 } from '@nestjs/common';
 import { LoginDto, RegisterUserDto } from './dto/user.dto';
 import { UserService } from './user.service';
-import { Response } from 'express';
 import { AuthService } from '../auth/auth.service';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
@@ -29,7 +27,7 @@ export class UserController {
   @UseGuards(AuthGuard('jwt'))
   @Get('getUserList')
   // @HttpCode(403)
-  getUserList(@Res({ passthrough: true }) _res: Response) {
+  getUserList() {
     // @Res() res: Response
 
     // 手动变更状态码

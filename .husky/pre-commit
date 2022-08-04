@@ -1,4 +1,5 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-pnpm test
+# Format and submit code according to lintstagedrc.js configuration
+npm run lint

@@ -26,7 +26,7 @@ specifiers:
   eslint-config-prettier: ^8.3.0
   eslint-plugin-prettier: ^4.0.0
   express: ^4.18.1
-  husky: ^8.0.1
+  husky: ^8.0.0
   jest: 28.0.3
   lodash: ^4.17.21
   log4js: ^6.6.1
