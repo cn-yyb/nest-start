@@ -107,8 +107,8 @@ export class UserController {
     FileInterceptor('file', {
       storage: diskStorage({
         destination: './uploads/',
-        filename: (req, file, cb) => {
-          console.log(req, file);
+        filename: (_req, file, cb) => {
+          // console.log(req, file);
           cb(null, file.originalname);
         },
       }),

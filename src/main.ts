@@ -45,9 +45,17 @@ async function bootstrap() {
 
   // server start
   await app.listen(PORT, () => {
+    Logger.log('==========================================================');
     Logger.log(
-      `The server has been runing at http://127.0.0.1:${PORT}, api-doc: http://127.0.0.1:${PORT}/api-doc`,
+      `The server has been runing at http://127.0.0.1:${PORT}`,
+      'server',
     );
+    Logger.log(`http://127.0.0.1:${PORT}/api-doc`, 'api-doc');
+    Logger.log(
+      `http://127.0.0.1:${PORT}/${ROUTE_PREFIX}/status`,
+      'status-monitor',
+    );
+    Logger.log('==========================================================');
   });
 }
 bootstrap();

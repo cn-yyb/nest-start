@@ -1,5 +1,5 @@
 /**
- * ## 系统监控面板属性设置
+ * * 系统监控面板属性设置
  */
 
 export default {
@@ -32,18 +32,5 @@ export default {
     statusCodes: true,
   },
   ignoreStartsWith: ['/admin'], // paths to ignore for responseTime stats
-  healthChecks: [
-    // {
-    //   protocol: 'http',
-    //   host: 'localhost',
-    //   path: '/health/alive',
-    //   port: 3001,
-    // },
-    // {
-    //   protocol: 'http',
-    //   host: 'localhost',
-    //   path: '/health/dead',
-    //   port: 3001,
-    // },
-  ],
+  healthChecks: [],
 };
