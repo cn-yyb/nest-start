@@ -29,9 +29,10 @@ export class RegisterUserDto {
 
   @ApiProperty({ description: '手机号' })
   @IsNotEmpty({ message: '手机号不能为空' })
-  @IsPhoneNumber('CN')
-  @IsNumber()
-  readonly mobile: number;
+  @IsPhoneNumber('CN', {
+    message: '手机号格式不合法!',
+  })
+  readonly mobile: string;
 
   @ApiProperty({
     required: false,
@@ -55,4 +56,9 @@ export class LoginDto {
   })
   @IsNotEmpty({ message: '密码不能为空' })
   readonly password: string;
+}
+
+export class UploadFileDto {
+  @ApiProperty({ type: 'string', format: 'binary' })
+  file: any;
 }

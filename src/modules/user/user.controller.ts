@@ -3,15 +3,26 @@ import {
   Controller,
   Get,
   Post,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
   UsePipes,
 } from '@nestjs/common';
-import { LoginDto, RegisterUserDto } from './dto/user.dto';
+import { LoginDto, RegisterUserDto, UploadFileDto } from './dto/user.dto';
 import { UserService } from './user.service';
 import { AuthService } from '../auth/auth.service';
 import { AuthGuard } from '@nestjs/passport';
-import { ApiBearerAuth, ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiConsumes,
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger';
 import { ValidationPipe } from '@/pipe/validation.pipe';
+import { FileInterceptor } from '@nestjs/platform-express/multer';
+import { Express } from 'express';
+import { diskStorage } from 'multer';
 
 @ApiBearerAuth() // Swagger 的 JWT 验证
 @ApiTags('user') // 添加 接口标签 装饰器
@@ -85,5 +96,34 @@ export class UserController {
       }
     } else {
     }
+  }
+
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    description: '通用文件上传',
+    type: UploadFileDto,
+  })
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: diskStorage({
+        destination: './uploads/',
+        filename: (req, file, cb) => {
+          console.log(req, file);
+          cb(null, file.originalname);
+        },
+      }),
+    }),
+  )
+  @Post('upload')
+  uploadFile(@UploadedFile() file: Express.Multer.File) {
+    console.log(file);
+
+    return {
+      code: 0,
+      msg: 'ok',
+      data: {
+        originalname: file?.originalname,
+      },
+    };
   }
 }

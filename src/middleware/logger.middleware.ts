@@ -1,4 +1,4 @@
-import { Logger } from '@/utils/log4js';
+import { Logger } from '@/utils/log4js.utils';
 import { Injectable, NestMiddleware } from '@nestjs/common';
 import { Request, Response } from 'express';
 

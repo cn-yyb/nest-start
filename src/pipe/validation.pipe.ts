@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { validate } from 'class-validator';
 import { plainToClass } from 'class-transformer';
-import { Logger } from '../utils/log4js';
+import { Logger } from '../utils/log4js.utils';
 
 @Injectable()
 export class ValidationPipe implements PipeTransform {

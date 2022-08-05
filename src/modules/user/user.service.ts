@@ -8,17 +8,28 @@ import { RegisterUserDto } from './dto/user.dto';
 @Injectable()
 export class UserService {
   // 编辑和user模块相关的业务逻辑
-  getUserList(): UserInfoItem[] {
-    const userList = Array(10)
-      .fill(null)
-      .map((_v, i) => ({
-        username: '张三-' + i + 1,
-        nickName: 'zs' + i + 1,
-        gender: Math.random() > 0.5 ? 1 : 0,
-        birth: new Date(Math.random() * 100000).toLocaleString(),
-        tel: 13488888888,
-      }));
-    return userList;
+  async getUserList() {
+    // const userList = Array(10)
+    //   .fill(null)
+    //   .map((_v, i) => ({
+    //     username: '张三-' + i + 1,
+    //     nickName: 'zs' + i + 1,
+    //     gender: Math.random() > 0.5 ? 1 : 0,
+    //     birth: new Date(Math.random() * 100000).toLocaleString(),
+    //     tel: 13488888888,
+    //   }));
+
+    const data = await sequelize.query(`
+      SELECT
+        user_id userId, account_name username, real_name realName, mobile
+      FROM
+        admin_user
+    `);
+    return {
+      code: 200,
+      msg: 'ok',
+      data,
+    };
   }
 
   async findOne(username: string): Promise<any | undefined> {
