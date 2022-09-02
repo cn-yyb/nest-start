@@ -30,6 +30,7 @@
     "@nestjs/platform-express": "^8.0.0",
     "@nestjs/platform-socket.io": "7.6.11",
     "@nestjs/swagger": "^6.0.5",
+    "@nestjs/websockets": "^9.0.8",
     "chalk": "4.x",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.13.2",

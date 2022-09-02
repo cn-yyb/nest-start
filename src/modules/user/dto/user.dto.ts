@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsNumber, IsPhoneNumber, IsString } from 'class-validator';
+import { IsNotEmpty, IsPhoneNumber, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateUserDto {
@@ -60,5 +60,6 @@ export class LoginDto {
 
 export class UploadFileDto {
   @ApiProperty({ type: 'string', format: 'binary' })
+  @IsNotEmpty({ message: 'file字段不能为空！' })
   file: any;
 }

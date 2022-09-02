@@ -9,9 +9,12 @@ import { logger } from './middleware/logger.middleware';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { PORT, ROUTE_PREFIX } from './constants/server.content';
 import { Logger } from '@nestjs/common';
+import { NestExpressApplication } from '@nestjs/platform-express';
+import { join } from 'path';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+
   // 开启跨域访问
   app.enableCors({ origin: '*', credentials: true });
   // todo 设置全局路由前缀
@@ -27,6 +30,10 @@ async function bootstrap() {
   app.useGlobalFilters(new AllExceptionsFilter());
   // 过滤处理 HTTP 异常
   app.useGlobalFilters(new HttpExceptionFilter());
+  // 配置静态资源目录
+  app.useStaticAssets(join(__dirname, '..', 'upload'), {
+    prefix: '/upload',
+  });
 
   // 配置 Swagger
   const options = new DocumentBuilder()

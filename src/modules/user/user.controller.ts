@@ -23,6 +23,8 @@ import { ValidationPipe } from '@/pipe/validation.pipe';
 import { FileInterceptor } from '@nestjs/platform-express/multer';
 import { Express } from 'express';
 import { diskStorage } from 'multer';
+import * as path from 'path';
+import * as moment from 'moment';
 
 @ApiBearerAuth() // Swagger 的 JWT 验证
 @ApiTags('user') // 添加 接口标签 装饰器
@@ -49,7 +51,7 @@ export class UserController {
     return this.userService.getUserList();
   }
 
-  @ApiOperation({ summary: '用户登录' })
+  @ApiOperation({ summary: '用户注册' })
   @ApiBody({
     description: '用户注册',
     type: RegisterUserDto,
@@ -100,16 +102,16 @@ export class UserController {
 
   @ApiConsumes('multipart/form-data')
   @ApiBody({
-    description: '通用文件上传',
+    description: '通用单文件上传',
     type: UploadFileDto,
   })
   @UseInterceptors(
     FileInterceptor('file', {
       storage: diskStorage({
-        destination: './uploads/',
+        destination: `./upload/${moment().format('YYYYMMDD')}`,
         filename: (_req, file, cb) => {
           // console.log(req, file);
-          cb(null, file.originalname);
+          cb(null, `${Date.now()}${path.extname(file.originalname)}`);
         },
       }),
     }),
@@ -122,7 +124,8 @@ export class UserController {
       code: 0,
       msg: 'ok',
       data: {
-        originalname: file?.originalname,
+        originalname: file.originalname,
+        fileUrl: `http://127.0.0.1:8000/${file.path.replace(/\\/g, '/')}`,
       },
     };
   }
