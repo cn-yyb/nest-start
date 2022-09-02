@@ -99,7 +99,7 @@
     "testEnvironment": "node"
   },
   "lint-staged": {
-    "*.{js,ts}": [
+    "src/**/*.{js,ts}": [
       "eslint --fix",
       "prettier --write"
     ],
