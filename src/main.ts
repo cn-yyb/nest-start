@@ -49,7 +49,6 @@ async function bootstrap() {
     app,
     SwaggerModule.createDocument(app, options),
   );
-
   // server start
   await app.listen(PORT, () => {
     Logger.log('==========================================================');

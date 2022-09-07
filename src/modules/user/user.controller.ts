@@ -25,6 +25,7 @@ import { Express } from 'express';
 import { diskStorage } from 'multer';
 import * as path from 'path';
 import * as moment from 'moment';
+import { BASE_PATH } from '@/constants/server.content';
 
 @ApiBearerAuth() // Swagger 的 JWT 验证
 @ApiTags('user') // 添加 接口标签 装饰器
@@ -125,7 +126,7 @@ export class UserController {
       msg: 'ok',
       data: {
         originalname: file.originalname,
-        fileUrl: `http://127.0.0.1:8000/${file.path.replace(/\\/g, '/')}`,
+        fileUrl: `${BASE_PATH}/${file.path.replace(/\\/g, '/')}`,
       },
     };
   }

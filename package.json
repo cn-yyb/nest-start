@@ -34,6 +34,7 @@
     "chalk": "4.x",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.13.2",
+    "event-loop-stats": "^1.4.1",
     "express": "^4.18.1",
     "lodash": "^4.17.21",
     "log4js": "^6.6.1",

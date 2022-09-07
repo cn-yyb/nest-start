@@ -1,6 +1,7 @@
 // src/database/sequelize.ts
 import { Sequelize } from 'sequelize-typescript';
 import db from '@/config/db';
+import { Logger } from '@nestjs/common';
 
 const { database, user, password, host, port, connectionLimit } = db.mysql;
 
@@ -21,11 +22,11 @@ const sequelize = new Sequelize(database, user, password || null, {
 sequelize
   .authenticate()
   .then(() => {
-    console.log('数据库连接成功！');
+    Logger.log('数据库连接成功！');
   })
   .catch((err: any) => {
     // 数据库连接失败时打印输出
-    console.log(err);
+    Logger.error(err);
     throw err;
   });
 
