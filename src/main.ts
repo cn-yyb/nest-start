@@ -12,6 +12,10 @@ import { Logger } from '@nestjs/common';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
 
+import * as dotenv from 'dotenv';
+dotenv.config();
+
+console.log(process.env.NODE_ENV, process.env.TITLE, process.env);
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
@@ -39,7 +43,9 @@ async function bootstrap() {
   const options = new DocumentBuilder()
     .addBearerAuth() // 开启 BearerAuth 授权认证
     .setTitle('Nest 接口文档')
-    .setDescription('The nest-zero-to-one API description')
+    .setDescription(
+      `<a href="http://127.0.0.1:8000/api-doc">http://127.0.0.1:8000/api-doc</a>`,
+    )
     .setVersion('1.0')
     .addTag('test')
     .build();

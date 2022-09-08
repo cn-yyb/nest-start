@@ -97,7 +97,6 @@ export class UserController {
             msg: '该用户未注册！',
           };
       }
-    } else {
     }
   }
 

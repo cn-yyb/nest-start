@@ -19,12 +19,12 @@ export class UserService {
     //     tel: 13488888888,
     //   }));
 
-    const data = await sequelize.query(`
+    const data = (await sequelize.query(`
       SELECT
       user_id userId, account_name username, real_name realName, mobile, role
       FROM
         admin_user
-    `);
+    `)) as UserInfoItem[];
     return {
       code: 200,
       msg: 'ok',
