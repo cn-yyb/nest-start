@@ -15,7 +15,6 @@ import { join } from 'path';
 import * as dotenv from 'dotenv';
 dotenv.config();
 
-console.log(process.env.NODE_ENV, process.env.TITLE, process.env);
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 

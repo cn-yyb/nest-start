@@ -61,5 +61,5 @@ export class LoginDto {
 export class UploadFileDto {
   @ApiProperty({ type: 'string', format: 'binary' })
   @IsNotEmpty({ message: 'file字段不能为空！' })
-  file: any;
+  readonly file: any;
 }
