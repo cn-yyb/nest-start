@@ -7,3 +7,7 @@ export const WS_PORT = 8001;
 export const BASE_URL = 'http://192.168.1.15';
 
 export const BASE_PATH = `${BASE_URL}:${PORT}`;
+
+export const isDevMode = () => process.env.NODE_ENV === 'development';
+
+export const isProdMode = () => process.env.NODE_ENV === 'production';

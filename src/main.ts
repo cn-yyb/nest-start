@@ -10,10 +10,14 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { PORT, ROUTE_PREFIX } from './constants/server.content';
 import { Logger } from '@nestjs/common';
 import { NestExpressApplication } from '@nestjs/platform-express';
-import { join } from 'path';
+import { join, resolve } from 'path';
 
 import * as dotenv from 'dotenv';
-dotenv.config();
+// dotenv.config();
+
+dotenv.config({
+  path: resolve(__dirname, `../.env.${process.env.NODE_ENV}`),
+});
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -27,7 +31,7 @@ async function bootstrap() {
   app.use(express.urlencoded({ extended: true })); // For parsing application/x-www-form-urlencoded
   //  请求日志打印
   app.use(logger);
-  // 全局拦截器拦截器
+  // 全局拦截器
   app.useGlobalInterceptors(new TransformInterceptor());
   // 全部异常捕获过滤器
   app.useGlobalFilters(new AllExceptionsFilter());
