@@ -13,6 +13,8 @@ import * as path from 'path';
  * @url https://blog.csdn.net/lxmuyu/article/details/125102992
  */
 import { ConfigModule } from 'nestjs-config';
+import { WsGateway } from './events/ws/ws.gateway';
+// import { WsModule } from './events/ws/ws.module';
 
 @Module({
   imports: [
@@ -21,8 +23,9 @@ import { ConfigModule } from 'nestjs-config';
     StatusMonitorModule.forRoot(statusMonitorConfig),
     // ConfigModule.forRoot(),
     ConfigModule.load(path.resolve(__dirname, 'config', '**/!(*.d).{ts,js}')),
+    // WsModule,
   ],
   controllers: [AppController, UserController],
-  providers: [AppService],
+  providers: [AppService, WsGateway],
 })
 export class AppModule {}
