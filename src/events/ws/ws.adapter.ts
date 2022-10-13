@@ -12,9 +12,16 @@ export class WsAdapter implements WebSocketAdapter {
     return new WebSocket.Server({ port, ...options });
   }
 
-  bindClientConnect(server, callback: () => void) {
+  // 绑定客户端连接事件监听
+  bindClientConnect(server: WebSocket, callback: () => void) {
     // console.log('ws bindClientConnect, server:\n', server);
     server.on('connection', callback);
+  }
+
+  // 绑定客户端断开连接事件监听
+  bindClientDisconnect(server: WebSocket, callback: () => void) {
+    // console.log('有人断开连接client');
+    server.on('close', callback);
   }
 
   bindMessageHandlers(
@@ -35,7 +42,7 @@ export class WsAdapter implements WebSocketAdapter {
 
   bindMessageHandler(
     _client: WebSocket,
-    buffer,
+    buffer: any,
     handlers: MessageMappingProperties[],
     process: (data: any) => Observable<any>,
   ): Observable<any> {
@@ -56,7 +63,7 @@ export class WsAdapter implements WebSocketAdapter {
     return process(messageHandler.callback(message.data));
   }
 
-  close(server) {
+  close(server: WebSocket) {
     console.log('ws server close');
     server.close();
   }

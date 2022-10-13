@@ -11,9 +11,7 @@ import { PORT, ROUTE_PREFIX } from './constants/server.content';
 import { Logger } from '@nestjs/common';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { join, resolve } from 'path';
-// import { WsAdapter } from './events/ws/ws.adapter';
-// import * as WsAdapter from '@nestjs/platform-socket.io';
-
+import { WsAdapter } from './events/ws/ws.adapter';
 import * as dotenv from 'dotenv';
 // dotenv.config();
 
@@ -25,8 +23,7 @@ async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
   // 配置 ws 服务适配器
-  // app.useWebSocketAdapter(new WsAdapter.IoAdapter(app));
-  // app.useWebSocketAdapter(new WsAdapter(app));
+  app.useWebSocketAdapter(new WsAdapter(app));
 
   // 开启跨域访问
   app.enableCors({ origin: '*', credentials: true });
