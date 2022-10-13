@@ -10,6 +10,7 @@ import {
   OnGatewayInit,
 } from '@nestjs/websockets';
 import * as WebSocket from 'ws';
+import { CustomWebSocket } from './interfaces/ws.interface';
 
 @WebSocketGateway(8001, {
   cors: {
@@ -19,27 +20,26 @@ import * as WebSocket from 'ws';
 export class WsGateway
   implements OnGatewayDisconnect, OnGatewayConnection, OnGatewayInit
 {
-  @WebSocketServer()
-  server: WebSocket.Server;
+  @WebSocketServer() server: WebSocket.Server;
 
   afterInit(_server: WebSocket.Server) {
     Logger.log('websocket server init successfully!', 'websocket');
   }
 
-  handleConnection(client: any) {
+  handleConnection(client: CustomWebSocket) {
     // console.log(client, args);
     client.id = +new Date();
     console.log('新的连接进来了');
   }
 
-  handleDisconnect(client: any) {
+  handleDisconnect(client: CustomWebSocket) {
     console.log('关闭了连接: ', client.id);
     // throw new Error('Method not implemented.');
   }
 
   @SubscribeMessage('msg')
   msg(@MessageBody() data: any): any {
-    console.log(this.server.clients.size);
+    // console.log(this.server.clients.size);
 
     // return {
     //   event: 'msg',
@@ -58,7 +58,7 @@ export class WsGateway
   }
 
   broadcast(msg: string) {
-    //server.connection:表示给所用用户发送消息
+    //server.clients:表示给所用用户发送消息
 
     this.server.clients.forEach((client) => {
       client.send(

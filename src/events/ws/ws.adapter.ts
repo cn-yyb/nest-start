@@ -7,7 +7,7 @@ import { mergeMap, filter } from 'rxjs/operators';
 export class WsAdapter implements WebSocketAdapter {
   constructor(private app: INestApplicationContext) {}
 
-  create(port: number, options: any = {}): any {
+  create(port: number, options: WebSocket.ServerOptions = {}): any {
     // console.log('ws create');
     return new WebSocket.Server({ port, ...options });
   }
