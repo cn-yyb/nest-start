@@ -10,7 +10,7 @@ import {
   OnGatewayInit,
 } from '@nestjs/websockets';
 import * as WebSocket from 'ws';
-import { CustomWebSocket } from './interfaces/ws.interface';
+import { CustomWebSocket, MsgTypes } from './interfaces/ws.interface';
 
 @WebSocketGateway(8001, {
   cors: {
@@ -30,6 +30,16 @@ export class WsGateway
     // console.log(client, args);
     client.id = +new Date();
     console.log('新的连接进来了');
+    // 校验连接信息，为连接对象绑定指定标识或者个人信息
+
+    this.broadcast({
+      event: 'enter',
+      msg: 'new user enter!',
+      data: `有新用户${client.id}进入房间！`,
+      broadcastList: [],
+      hasSelf: false,
+      selfId: client.id,
+    });
   }
 
   handleDisconnect(client: CustomWebSocket) {
@@ -38,7 +48,10 @@ export class WsGateway
   }
 
   @SubscribeMessage('msg')
-  msg(@MessageBody() data: any): any {
+  msg(
+    @MessageBody() data: any,
+    @ConnectedSocket() client: CustomWebSocket,
+  ): any {
     // console.log(this.server.clients.size);
 
     // return {
@@ -47,26 +60,50 @@ export class WsGateway
     //   msg: 'rustfisher.com',
     // };
 
-    this.broadcast(data);
+    this.broadcast({
+      event: 'msg',
+      msg: 'broadcast message',
+      data,
+      broadcastList: [],
+      selfId: client.id,
+      hasSelf: false,
+    });
   }
 
   @SubscribeMessage('hello2')
-  hello2(@MessageBody() data: any, @ConnectedSocket() client: WebSocket): any {
+  hello2(
+    @MessageBody() data: any,
+    @ConnectedSocket() client: CustomWebSocket,
+  ): any {
     // console.log('收到消息 client:', client);
 
     client.send(JSON.stringify({ event: 'tmp', data: '收到消息啦,' + data }));
   }
 
-  broadcast(msg: string) {
+  broadcast(msg: MsgTypes) {
     //server.clients:表示给所用用户发送消息
 
-    this.server.clients.forEach((client) => {
-      client.send(
-        JSON.stringify({
-          event: 'msg',
-          data: `广播消息：${msg},${new Date().toLocaleString()}`,
-        }),
-      );
+    const responseData = JSON.stringify({
+      event: msg.event,
+      data: msg.data,
+      msg: msg.msg,
+      time: new Date().toLocaleString(),
+      userId: msg.selfId,
+    });
+
+    this.server.clients.forEach((client: CustomWebSocket) => {
+      if (msg.broadcastList?.length) {
+        msg.hasSelf && msg.selfId && msg.broadcastList.push(msg.selfId);
+        if (msg.broadcastList.includes(client.id)) {
+          client.send(responseData);
+        }
+      } else {
+        if (msg.hasSelf) {
+          client.send(responseData);
+        } else {
+          msg.selfId !== client.id && client.send(responseData);
+        }
+      }
     });
   }
 }
