@@ -25,7 +25,7 @@ import { Express } from 'express';
 import { diskStorage } from 'multer';
 import * as path from 'path';
 import * as moment from 'moment';
-import { BASE_PATH } from '@/constants/server.content';
+import { BASE_PATH } from '@/constants/server.contants';
 
 @ApiBearerAuth() // Swagger 的 JWT 验证
 @ApiTags('user') // 添加 接口标签 装饰器

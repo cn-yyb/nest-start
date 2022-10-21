@@ -7,7 +7,7 @@ import { TransformInterceptor } from './interceptor/transform.interceptor';
 import { logger } from './middleware/logger.middleware';
 // swagger
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import { PORT, ROUTE_PREFIX } from './constants/server.content';
+import { PORT, ROUTE_PREFIX } from './constants/server.contants';
 import { Logger } from '@nestjs/common';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { join, resolve } from 'path';
