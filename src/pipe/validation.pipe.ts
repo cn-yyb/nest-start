@@ -11,7 +11,6 @@ import { Logger } from '../utils/log4js.utils';
 @Injectable()
 export class ValidationPipe implements PipeTransform {
   async transform(value: any, { metatype }: ArgumentMetadata) {
-    console.log(`value:`, value, 'metatype: ', metatype);
     if (!metatype || !this.toValidate(metatype)) {
       // 如果没有传入验证规则，则不验证，直接返回数据
       return value;

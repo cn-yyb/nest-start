@@ -29,7 +29,6 @@ export class ContextTrace {
     public readonly columnNumber?: number,
   ) {}
 }
-
 Log4js.addLayout('Awesome-nest', (logConfig: any) => {
   return (logEvent: Log4js.LoggingEvent): string => {
     let moduleName = '';

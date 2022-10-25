@@ -18,20 +18,20 @@ export class AuthService {
       // console.log(user);
       if (pw === encryptPassword(password, salt)) {
         return {
-          code: 1,
+          code: 0,
           msg: '校验成功！',
           user,
         };
       } else {
         return {
-          code: 2,
+          code: 1,
           msg: '密码错误！',
           user: null,
         };
       }
     } else {
       return {
-        code: 0,
+        code: 2,
         msg: 'no data',
         user: null,
       };
@@ -44,7 +44,7 @@ export class AuthService {
     const payload = { username, sub, realName, role };
     try {
       return {
-        code: 1,
+        code: 0,
         msg: 'Success',
         data: {
           token: this.jwtService.sign(payload),
@@ -52,8 +52,8 @@ export class AuthService {
       };
     } catch (error) {
       return {
-        code: 0,
-        msg: '账号或密码错误！',
+        code: 1,
+        msg: error,
       };
     }
   }

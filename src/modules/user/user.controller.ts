@@ -83,17 +83,17 @@ export class UserController {
     );
     if (authRes) {
       switch (authRes.code) {
-        case 1:
+        case 0:
           return this.authService.certificate(authRes.user);
-        case 2:
+        case 1:
           return {
-            code: 2,
+            code: 1,
             msg: '账号或密码错误！',
           };
 
         default:
           return {
-            code: 0,
+            code: 2,
             msg: '该用户未注册！',
           };
       }
