@@ -7,6 +7,7 @@ import {
   UseGuards,
   UseInterceptors,
   UsePipes,
+  Request,
 } from '@nestjs/common';
 import { LoginDto, RegisterUserDto, UploadFileDto } from './dto/user.dto';
 import { UserService } from './user.service';
@@ -57,16 +58,16 @@ export class UserController {
     description: '用户注册',
     type: RegisterUserDto,
   })
-  @UseGuards(AuthGuard('jwt'))
   @UsePipes(new ValidationPipe()) // 使用管道验证
   @Post('register')
   async register(@Body() userDto: RegisterUserDto) {
     return await this.userService.register(userDto);
   }
 
-  @Get('findOne')
-  findOne(@Body() body: { username: string }) {
-    return this.userService.findOne(body.username);
+  @UseGuards(AuthGuard('jwt'))
+  @Post('getUserInfo')
+  findOne(@Request() req) {
+    return this.userService.getUserSelfInfo(req.user.username);
   }
 
   @ApiOperation({ summary: '用户登录' })
@@ -119,13 +120,14 @@ export class UserController {
   @Post('upload')
   uploadFile(@UploadedFile() file: Express.Multer.File) {
     console.log(file);
-
     return {
       code: 0,
       msg: 'ok',
       data: {
-        originalname: file.originalname,
+        originalName: file.originalname,
         fileUrl: `${BASE_PATH}/${file.path.replace(/\\/g, '/')}`,
+        filePath: `/${file.path.replace(/\\/g, '/')}`,
+        uploadDate: moment().format('YYYY-MM-DD hh:mm:ss'),
       },
     };
   }

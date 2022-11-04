@@ -9,27 +9,42 @@ import { RegisterUserDto } from './dto/user.dto';
 export class UserService {
   // 编辑和user模块相关的业务逻辑
   async getUserList() {
-    // const userList = Array(10)
-    //   .fill(null)
-    //   .map((_v, i) => ({
-    //     username: '张三-' + i + 1,
-    //     nickName: 'zs' + i + 1,
-    //     gender: Math.random() > 0.5 ? 1 : 0,
-    //     birth: new Date(Math.random() * 100000).toLocaleString(),
-    //     tel: 13488888888,
-    //   }));
-
     const data = (await sequelize.query(`
       SELECT
-      user_id userId, account_name username, real_name realName, mobile, role
+        user_id userId, account_name username, real_name realName, mobile, role
       FROM
         admin_user
     `)) as UserInfoItem[];
     return {
-      code: 200,
+      code: 0,
       msg: 'ok',
       data,
     };
+  }
+
+  // 获取登录用户信息
+  async getUserSelfInfo(username: string) {
+    try {
+      const userInfo = (
+        await sequelize.query(`
+      SELECT
+        user_id userId, account_name username, real_name realName,
+        mobile, role
+      FROM
+        admin_user
+       WHERE
+        account_name = '${username}'
+    `)
+      )[0] as unknown as UserInfoItem[];
+
+      return {
+        code: 0,
+        msg: 'Success',
+        data: userInfo,
+      };
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   async findOne(username: string): Promise<any | undefined> {
@@ -53,7 +68,10 @@ export class UserService {
 
       return user;
     } catch (error) {
-      console.log(error);
+      return {
+        code: 503,
+        msg: `Service error: ${error}`,
+      };
     }
   }
 
@@ -87,7 +105,7 @@ export class UserService {
     try {
       await sequelize.query(registerSQL, { logging: false });
       return {
-        code: 200,
+        code: 0,
         msg: 'Success',
       };
     } catch (error) {
