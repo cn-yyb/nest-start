@@ -41,7 +41,7 @@ export class WsAdapter implements WebSocketAdapter {
   }
 
   bindMessageHandler(
-    _client: WebSocket,
+    client: WebSocket,
     buffer: any,
     handlers: MessageMappingProperties[],
     process: (data: any) => Observable<any>,
@@ -50,7 +50,9 @@ export class WsAdapter implements WebSocketAdapter {
     try {
       message = JSON.parse(buffer.data);
     } catch (error) {
-      console.log('ws解析json出错', error);
+      console.log(
+        'ws解析 json 出错! 请遵循统一格式：{ "event": "xxx", "data": "xxxx." }',
+      );
       return EMPTY;
     }
 

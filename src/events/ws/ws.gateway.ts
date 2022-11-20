@@ -70,14 +70,14 @@ export class WsGateway
     });
   }
 
-  @SubscribeMessage('hello2')
+  @SubscribeMessage('test')
   hello2(
     @MessageBody() data: any,
     @ConnectedSocket() client: CustomWebSocket,
   ): any {
     // console.log('收到消息 client:', client);
 
-    client.send(JSON.stringify({ event: 'tmp', data: '收到消息啦,' + data }));
+    client.send(JSON.stringify({ event: 'test', data: '收到消息啦,' + data }));
   }
 
   broadcast(msg: MsgTypes) {
