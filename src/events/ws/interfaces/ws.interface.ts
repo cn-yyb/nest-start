@@ -14,3 +14,10 @@ export interface MsgTypes {
   selfId?: number;
   [x: string]: any;
 }
+
+export interface WSMsgType {
+  event: string;
+  data: string;
+  time: string;
+  meta?: object;
+}

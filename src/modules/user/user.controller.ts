@@ -66,8 +66,8 @@ export class UserController {
 
   @UseGuards(AuthGuard('jwt'))
   @Post('getUserInfo')
-  findOne(@Request() req) {
-    return this.userService.getUserSelfInfo(req.user.username);
+  findOne(@Body() body) {
+    return this.userService.getUserSelfInfo(body.username || '');
   }
 
   @ApiOperation({ summary: '用户登录' })

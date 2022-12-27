@@ -41,7 +41,7 @@ export class WsAdapter implements WebSocketAdapter {
   }
 
   bindMessageHandler(
-    client: WebSocket,
+    _client: WebSocket,
     buffer: any,
     handlers: MessageMappingProperties[],
     process: (data: any) => Observable<any>,
@@ -62,7 +62,7 @@ export class WsAdapter implements WebSocketAdapter {
     if (!messageHandler) {
       return EMPTY;
     }
-    return process(messageHandler.callback(message.data));
+    return process(messageHandler.callback(message));
   }
 
   close(server: WebSocket) {

@@ -15,15 +15,24 @@ import * as path from 'path';
 import { ConfigModule } from 'nestjs-config';
 import { WsGateway } from './events/ws/ws.gateway';
 // import { WsModule } from './events/ws/ws.module';
+import { SequelizeModule } from '@nestjs/sequelize';
+import { adminUser } from './database/models';
+import dbConfig from './config/dbConnect';
 
 @Module({
   imports: [
+    // 一般业务模块
     UserModule,
     AuthModule,
+    // WsModule,
+    // 项目状态监控模块
     StatusMonitorModule.forRoot(statusMonitorConfig),
+    // 项目配置参数模块
     // ConfigModule.forRoot(),
     ConfigModule.load(path.resolve(__dirname, 'config', '**/!(*.d).{ts,js}')),
-    // WsModule,
+    // 数据库配置
+    SequelizeModule.forFeature([adminUser]),
+    SequelizeModule.forRoot(dbConfig),
   ],
   controllers: [AppController, UserController],
   providers: [AppService, WsGateway],
