@@ -131,4 +131,9 @@ export class UserController {
       },
     };
   }
+
+  @Get('test')
+  test() {
+    return this.userService.test();
+  }
 }

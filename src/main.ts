@@ -1,7 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import * as express from 'express';
 import { AppModule } from './app.module';
-import { AllExceptionsFilter } from './filter/any-exception.filter';
+import { AllExceptionFilter } from './filter/any-exception.filter';
 import { HttpExceptionFilter } from './filter/http-exception.filter';
 import { TransformInterceptor } from './interceptor/transform.interceptor';
 import { logger } from './middleware/logger.middleware';
@@ -37,7 +37,7 @@ async function bootstrap() {
   // 全局拦截器
   app.useGlobalInterceptors(new TransformInterceptor());
   // 全部异常捕获过滤器
-  app.useGlobalFilters(new AllExceptionsFilter());
+  app.useGlobalFilters(new AllExceptionFilter());
   // 过滤处理 HTTP 异常
   app.useGlobalFilters(new HttpExceptionFilter());
   // 配置静态资源目录
@@ -50,7 +50,7 @@ async function bootstrap() {
     .addBearerAuth() // 开启 BearerAuth 授权认证
     .setTitle('Nest 接口文档')
     .setDescription(
-      `<a href="http://127.0.0.1:8000/api-doc">http://127.0.0.1:8000/api-doc</a>`,
+      `Base Url: <a href="http://127.0.0.1:${PORT}/api-doc">http://127.0.0.1:${PORT}/api/v1/</a>`,
     )
     .setVersion('1.0')
     .addTag('test')

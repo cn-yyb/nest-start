@@ -60,10 +60,11 @@ const devConfig: SequelizeModuleOptions = {
   },
   retryAttempts: 10,
   retryDelay: 3000,
-  // 模型同步
-  // sync: {
-  //   alter: true,
-  // },
+  // 根据模型同步数据库表（慎用）
+  sync: {
+    force: true,
+    // alter: true,
+  },
   pool: {
     max: 10, // 连接池中最大连接数量
     min: 0, // 连接池中最小连接数量

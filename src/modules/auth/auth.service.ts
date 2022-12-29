@@ -15,9 +15,9 @@ export class AuthService {
   async validateUser(username: string, password: string) {
     const user: adminUser = await this.userService.findOne(username);
     if (user) {
-      const { passwd: pw, passwdSalt } = user;
+      const { password: pw, passwordSalt } = user;
       // console.log(user);
-      if (pw === encryptPassword(password, passwdSalt)) {
+      if (pw === encryptPassword(password, passwordSalt)) {
         return {
           code: 0,
           msg: '校验成功！',

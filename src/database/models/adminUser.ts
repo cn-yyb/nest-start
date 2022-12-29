@@ -1,3 +1,4 @@
+import { UUID, UUIDV4 } from 'sequelize';
 import {
   Model,
   Table,
@@ -10,19 +11,25 @@ import {
 
 export interface adminUserAttributes {
   userId?: number;
+  uid?: string;
   accountName?: string;
   realName?: string;
-  passwd?: string;
-  passwdSalt?: string;
+  password?: string;
+  passwordSalt?: string;
   mobile?: string;
   role?: number;
-  userStatus?: number;
+  status?: number;
+  bio?: string;
+  gender?: number;
+  birthday?: Date;
+  address?: string;
+  avatar?: string;
   createBy?: number;
   updateBy?: number;
   createAt?: Date;
   updateAt?: Date;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
   deletedAt?: Date;
 }
 
@@ -42,6 +49,13 @@ export class adminUser
   userId?: number;
 
   @Column({
+    type: UUID,
+    comment: '用户uuid',
+    defaultValue: UUIDV4,
+  })
+  uid?: string;
+
+  @Column({
     field: 'account_name',
     allowNull: true,
     type: DataType.STRING(24),
@@ -58,15 +72,15 @@ export class adminUser
   realName?: string;
 
   @Column({ allowNull: true, type: DataType.CHAR(32), comment: '密码' })
-  passwd?: string;
+  password?: string;
 
   @Column({
-    field: 'passwd_salt',
+    field: 'password_salt',
     allowNull: true,
     type: DataType.CHAR(6),
     comment: '密码盐',
   })
-  passwdSalt?: string;
+  passwordSalt?: string;
 
   @Column({
     allowNull: true,
@@ -87,13 +101,32 @@ export class adminUser
   role?: number;
 
   @Column({
-    field: 'user_status',
     allowNull: true,
     type: DataType.TINYINT,
-    comment: '状态：0-失效|1-有效|2-删除',
+    comment: '状态：0- 禁用|1-正常|2-注销',
     defaultValue: '0',
   })
-  userStatus?: number;
+  status?: number;
+
+  @Column({ allowNull: true, type: DataType.STRING(255) })
+  bio?: string;
+
+  @Column({
+    allowNull: true,
+    type: DataType.TINYINT,
+    comment: '性别 0-女 | 1-男 | -1 未知',
+    defaultValue: '-1',
+  })
+  gender?: number;
+
+  @Column({ allowNull: true, type: DataType.DATE })
+  birthday?: Date;
+
+  @Column({ allowNull: true, type: DataType.STRING(40) })
+  address?: string;
+
+  @Column({ allowNull: true, type: DataType.STRING(40), comment: '用户头像' })
+  avatar?: string;
 
   @Column({
     field: 'create_by',
@@ -128,11 +161,11 @@ export class adminUser
   })
   updateAt?: Date;
 
-  @Column({ field: 'created_at', type: DataType.DATE })
-  createdAt!: Date;
+  @Column({ field: 'created_at', allowNull: true, type: DataType.DATE })
+  createdAt?: Date;
 
-  @Column({ field: 'updated_at', type: DataType.DATE })
-  updatedAt!: Date;
+  @Column({ field: 'updated_at', allowNull: true, type: DataType.DATE })
+  updatedAt?: Date;
 
   @Column({ field: 'deleted_at', allowNull: true, type: DataType.DATE })
   deletedAt?: Date;

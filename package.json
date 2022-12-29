@@ -20,7 +20,8 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "prepare": "husky install",
-    "lint:lint-staged": "lint-staged"
+    "lint:lint-staged": "lint-staged",
+    "sync-models": "npx stg -D mysql -h localhost -p 3306 -d start_db -u root -x root -i -C camel -o ./src/database/models -c -m -a ./src/database/associations.csv"
   },
   "dependencies": {
     "@nestjs/common": "^8.0.0",

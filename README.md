@@ -71,3 +71,9 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 ## License
 
 Nest is [MIT licensed](LICENSE).
+
+## Sync Server Models
+
+```shell
+  npx stg -D mysql -h localhost -p 3306 -d start_db -u root -x root -i -C camel -o ./src/database/models -c -m -a ./src/database/associations.csv
+```

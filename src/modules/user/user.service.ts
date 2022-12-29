@@ -4,12 +4,15 @@ import { UserInfoItem } from './interfaces/user.interface';
 // import sequelize from '@/database/sequelize'; // 引入 Sequelize 实例
 import { encryptPassword, makeSalt } from '@/utils/cryptogram.utils';
 import { RegisterUserDto } from './dto/user.dto';
-import { adminUser } from '@/database/models';
+import { adminUser, chatRoom } from '@/database/models';
 import { InjectModel } from '@nestjs/sequelize';
 
 @Injectable()
 export class UserService {
-  constructor(@InjectModel(adminUser) private userModel: typeof adminUser) {}
+  constructor(
+    @InjectModel(adminUser) private userModel: typeof adminUser,
+    @InjectModel(chatRoom) private chatRoomModel: typeof chatRoom,
+  ) {}
 
   // 编辑和user模块相关的业务逻辑
   async getUserList() {
@@ -72,10 +75,7 @@ export class UserService {
       });
       return user;
     } catch (error) {
-      return {
-        code: 503,
-        msg: `Service error: ${error}`,
-      };
+      throw error;
     }
   }
 
@@ -88,25 +88,25 @@ export class UserService {
         data: null,
       };
     }
-    const user = await this.findOne(accountName);
-    if (user) {
-      return {
-        code: 400,
-        msg: '用户已存在',
-        data: null,
-      };
-    }
-
-    const salt = makeSalt(); // 制作密码盐
-    const hashPwd = encryptPassword(password, salt); // 加密密码
     try {
-      // await sequelize.query(registerSQL, { logging: false });
+      const user = await this.findOne(accountName);
+      if (user) {
+        return {
+          code: 400,
+          msg: '用户已存在',
+          data: null,
+        };
+      }
+
+      const salt = makeSalt(); // 制作密码盐
+      const hashPwd = encryptPassword(password, salt); // 加密密码
+
       await this.userModel.create(
         {
           accountName: accountName,
           realName: realName,
-          passwd: hashPwd,
-          passwdSalt: salt,
+          password: hashPwd,
+          passwordSalt: salt,
           mobile: mobile,
         },
         {
@@ -123,5 +123,18 @@ export class UserService {
         msg: `Service error: ${error}`,
       };
     }
+  }
+
+  async test() {
+    const res = await this.chatRoomModel.create({
+      roomName: 'private-01',
+      type: 0,
+    });
+
+    return {
+      code: 0,
+      msg: 'success',
+      data: res,
+    };
   }
 }
