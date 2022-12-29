@@ -1,7 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import * as express from 'express';
 import { AppModule } from './app.module';
-import { AllExceptionFilter } from './filter/any-exception.filter';
+import { AnyExceptionFilter } from './filter/any-exception.filter';
 import { HttpExceptionFilter } from './filter/http-exception.filter';
 import { TransformInterceptor } from './interceptor/transform.interceptor';
 import { logger } from './middleware/logger.middleware';
@@ -37,7 +37,7 @@ async function bootstrap() {
   // 全局拦截器
   app.useGlobalInterceptors(new TransformInterceptor());
   // 全部异常捕获过滤器
-  app.useGlobalFilters(new AllExceptionFilter());
+  app.useGlobalFilters(new AnyExceptionFilter());
   // 过滤处理 HTTP 异常
   app.useGlobalFilters(new HttpExceptionFilter());
   // 配置静态资源目录

@@ -11,7 +11,7 @@ import {
 import { Logger } from '../utils/log4js.utils';
 
 @Catch()
-export class AllExceptionFilter implements ExceptionFilter {
+export class AnyExceptionFilter implements ExceptionFilter {
   catch(exception: unknown, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse();
