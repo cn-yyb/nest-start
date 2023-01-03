@@ -12,11 +12,14 @@ import * as path from 'path';
  * @desc 配合环境变量参数使用，使用 nestjs-config 模块管理配置参数
  * @url https://blog.csdn.net/lxmuyu/article/details/125102992
  */
-import { ConfigModule } from 'nestjs-config';
 import { WsGateway } from './events/ws/ws.gateway';
+
 // import { WsModule } from './events/ws/ws.module';
 import { SequelizeModule } from '@nestjs/sequelize';
-import { adminUser } from './database/models';
+import { users } from './database/models';
+import { EmailModule } from './modules/email/email.module';
+import { ConfigModule } from 'nestjs-config';
+
 import dbConfig from './config/dbConnect';
 
 @Module({
@@ -24,6 +27,7 @@ import dbConfig from './config/dbConnect';
     // 一般业务模块
     UserModule,
     AuthModule,
+    EmailModule,
     // WsModule,
     // 项目状态监控模块
     StatusMonitorModule.forRoot(statusMonitorConfig),
@@ -31,7 +35,7 @@ import dbConfig from './config/dbConnect';
     // ConfigModule.forRoot(),
     ConfigModule.load(path.resolve(__dirname, 'config', '**/!(*.d).{ts,js}')),
     // 数据库配置
-    SequelizeModule.forFeature([adminUser]),
+    SequelizeModule.forFeature([users]),
     SequelizeModule.forRoot(dbConfig),
   ],
   controllers: [AppController, UserController],

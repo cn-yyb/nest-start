@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { UserService } from '@/modules/user/user.service';
 import { JwtService } from '@nestjs/jwt';
 import { encryptPassword } from '@/utils/cryptogram.utils';
-import { adminUser } from '@/database/models';
+import { users } from '@/database/models';
 
 @Injectable()
 export class AuthService {
@@ -13,7 +13,7 @@ export class AuthService {
 
   // jwt 验证校验用户信息
   async validateUser(username: string, password: string) {
-    const user: adminUser = await this.userService.findOne(username);
+    const user: users = await this.userService.findOne(username);
     if (user) {
       const { password: pw, passwordSalt } = user;
       // console.log(user);

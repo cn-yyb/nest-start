@@ -9,7 +9,7 @@ import {
   UsePipes,
   Request,
 } from '@nestjs/common';
-import { LoginDto, RegisterUserDto, UploadFileDto } from './dto/user.dto';
+import { LoginDto, UserRegisterDto, UploadFileDto } from './dto/user.dto';
 import { UserService } from './user.service';
 import { AuthService } from '../auth/auth.service';
 import { AuthGuard } from '@nestjs/passport';
@@ -38,36 +38,15 @@ export class UserController {
     private readonly authService: AuthService,
   ) {}
 
-  // 创建 get 请求路由
-  @UseGuards(AuthGuard('jwt'))
-  @Get('getUserList')
-  // @HttpCode(403)
-  getUserList() {
-    // @Res() res: Response
-
-    // 手动变更状态码
-    // res.status(HttpStatus.FORBIDDEN);
-    // return this.userService.getUserList();
-
-    // 方式二 （抛异常）
-    return this.userService.getUserList();
-  }
-
   @ApiOperation({ summary: '用户注册' })
   @ApiBody({
     description: '用户注册',
-    type: RegisterUserDto,
+    type: UserRegisterDto,
   })
   @UsePipes(new ValidationPipe()) // 使用管道验证
   @Post('register')
-  async register(@Body() userDto: RegisterUserDto) {
+  async register(@Body() userDto: UserRegisterDto) {
     return await this.userService.register(userDto);
-  }
-
-  @UseGuards(AuthGuard('jwt'))
-  @Post('getUserInfo')
-  findOne(@Body() body) {
-    return this.userService.getUserSelfInfo(body.username || '');
   }
 
   @ApiOperation({ summary: '用户登录' })
@@ -101,6 +80,12 @@ export class UserController {
     }
   }
 
+  @UseGuards(AuthGuard('jwt'))
+  @Post('getUserInfo')
+  getUserInfo(@Body() body) {
+    return this.userService.getUserSelfInfo(body.username || '');
+  }
+
   @ApiConsumes('multipart/form-data')
   @ApiBody({
     description: '通用单文件上传',
@@ -130,10 +115,5 @@ export class UserController {
         uploadDate: moment().format('YYYY-MM-DD hh:mm:ss'),
       },
     };
-  }
-
-  @Get('test')
-  test() {
-    return this.userService.test();
   }
 }

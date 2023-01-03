@@ -9,12 +9,13 @@ import {
 } from 'sequelize-typescript';
 
 export interface chatRoomAttributes {
-  roomId?: number;
+  chatId?: number;
+  chatName?: string;
+  chatAvatar?: string;
+  owner?: string;
   status?: number;
-  roomName?: string;
-  type?: number;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
   deletedAt?: Date;
 }
 
@@ -24,14 +25,37 @@ export class chatRoom
   implements chatRoomAttributes
 {
   @Column({
-    field: 'room_id',
+    field: 'chat_id',
     primaryKey: true,
     autoIncrement: true,
     type: DataType.SMALLINT,
     comment: '房间号',
   })
   @Index({ name: 'PRIMARY', using: 'BTREE', order: 'ASC', unique: true })
-  roomId?: number;
+  chatId?: number;
+
+  @Column({
+    field: 'chat_name',
+    allowNull: true,
+    type: DataType.STRING(45),
+    comment: '群名称',
+  })
+  chatName?: string;
+
+  @Column({
+    field: 'chat_avatar',
+    allowNull: true,
+    type: DataType.STRING(200),
+    comment: '群头像',
+  })
+  chatAvatar?: string;
+
+  @Column({
+    allowNull: true,
+    type: DataType.STRING(45),
+    comment: '群主ID（私聊默认未空）',
+  })
+  owner?: string;
 
   @Column({
     allowNull: true,
@@ -41,26 +65,11 @@ export class chatRoom
   })
   status?: number;
 
-  @Column({
-    field: 'room_name',
-    allowNull: true,
-    type: DataType.STRING(25),
-    comment: '房间名称',
-  })
-  roomName?: string;
+  @Column({ field: 'created_at', allowNull: true, type: DataType.DATE })
+  createdAt?: Date;
 
-  @Column({
-    allowNull: true,
-    type: DataType.TINYINT,
-    comment: '类型 0-私聊 | 1-群聊',
-  })
-  type?: number;
-
-  @Column({ field: 'created_at', type: DataType.DATE })
-  createdAt!: Date;
-
-  @Column({ field: 'updated_at', type: DataType.DATE })
-  updatedAt!: Date;
+  @Column({ field: 'updated_at', allowNull: true, type: DataType.DATE })
+  updatedAt?: Date;
 
   @Column({ field: 'deleted_at', allowNull: true, type: DataType.DATE })
   deletedAt?: Date;

@@ -9,20 +9,25 @@ import {
   ForeignKey,
 } from 'sequelize-typescript';
 
-export interface adminUserAttributes {
+export interface usersAttributes {
   userId?: number;
-  uid?: string;
+  uid: string;
   accountName?: string;
+  nickName?: string;
   realName?: string;
   password?: string;
   passwordSalt?: string;
+  email?: string;
   mobile?: string;
   role?: number;
   status?: number;
   bio?: string;
   gender?: number;
-  birthday?: Date;
+  birthday?: string;
+  city?: string;
+  province?: string;
   address?: string;
+  sign?: string;
   avatar?: string;
   createBy?: number;
   updateBy?: number;
@@ -33,10 +38,10 @@ export interface adminUserAttributes {
   deletedAt?: Date;
 }
 
-@Table({ tableName: 'admin_user', timestamps: true, comment: '后台用户表' })
-export class adminUser
-  extends Model<adminUserAttributes, adminUserAttributes>
-  implements adminUserAttributes
+@Table({ tableName: 'users', timestamps: true, comment: '后台用户表' })
+export class users
+  extends Model<usersAttributes, usersAttributes>
+  implements usersAttributes
 {
   @Column({
     field: 'user_id',
@@ -49,11 +54,13 @@ export class adminUser
   userId?: number;
 
   @Column({
+    primaryKey: true,
     type: UUID,
     comment: '用户uuid',
     defaultValue: UUIDV4,
   })
-  uid?: string;
+  @Index({ name: 'PRIMARY', using: 'BTREE', order: 'ASC', unique: true })
+  uid!: string;
 
   @Column({
     field: 'account_name',
@@ -62,6 +69,14 @@ export class adminUser
     comment: '用户账号',
   })
   accountName?: string;
+
+  @Column({
+    field: 'nick_name',
+    allowNull: true,
+    type: DataType.STRING(45),
+    comment: '昵称',
+  })
+  nickName?: string;
 
   @Column({
     field: 'real_name',
@@ -82,12 +97,10 @@ export class adminUser
   })
   passwordSalt?: string;
 
-  @Column({
-    allowNull: true,
-    type: DataType.STRING(15),
-    comment: '手机号码',
-    defaultValue: '0',
-  })
+  @Column({ allowNull: true, type: DataType.STRING(45), comment: '邮箱' })
+  email?: string;
+
+  @Column({ allowNull: true, type: DataType.STRING(15), comment: '手机号码' })
   @Index({ name: 'idx_m', using: 'BTREE', order: 'ASC', unique: false })
   mobile?: string;
 
@@ -119,13 +132,22 @@ export class adminUser
   })
   gender?: number;
 
-  @Column({ allowNull: true, type: DataType.DATE })
-  birthday?: Date;
+  @Column({ allowNull: true, type: DataType.STRING(10) })
+  birthday?: string;
 
-  @Column({ allowNull: true, type: DataType.STRING(40) })
+  @Column({ allowNull: true, type: DataType.STRING(40), comment: '城市' })
+  city?: string;
+
+  @Column({ allowNull: true, type: DataType.STRING(30), comment: '省份' })
+  province?: string;
+
+  @Column({ allowNull: true, type: DataType.STRING(40), comment: '详细地址' })
   address?: string;
 
-  @Column({ allowNull: true, type: DataType.STRING(40), comment: '用户头像' })
+  @Column({ allowNull: true, type: DataType.STRING(120), comment: '签名' })
+  sign?: string;
+
+  @Column({ allowNull: true, type: DataType.STRING(120), comment: '用户头像' })
   avatar?: string;
 
   @Column({

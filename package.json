@@ -24,6 +24,7 @@
     "sync-models": "npx stg -D mysql -h localhost -p 3306 -d start_db -u root -x root -i -C camel -o ./src/database/models -c -m -a ./src/database/associations.csv"
   },
   "dependencies": {
+    "@nestjs-modules/mailer": "^1.8.1",
     "@nestjs/common": "^8.0.0",
     "@nestjs/core": "^8.0.0",
     "@nestjs/jwt": "^9.0.0",
@@ -38,6 +39,7 @@
     "class-validator": "^0.13.2",
     "cross-env": "^7.0.3",
     "dotenv": "^16.0.2",
+    "ejs": "^3.1.8",
     "event-loop-stats": "^1.4.1",
     "express": "^4.18.1",
     "lodash": "^4.17.21",
@@ -47,6 +49,7 @@
     "mysql2": "^2.3.3",
     "nestjs-config": "^1.4.10",
     "nestjs-status-monitor": "^1.0.1",
+    "nodemailer": "^6.8.0",
     "passport": "^0.6.0",
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",

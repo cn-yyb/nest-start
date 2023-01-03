@@ -1,16 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import { UserInfoItem } from './interfaces/user.interface';
-// import * as Sequelize from 'sequelize'; // 引入 Sequelize 库
-// import sequelize from '@/database/sequelize'; // 引入 Sequelize 实例
 import { encryptPassword, makeSalt } from '@/utils/cryptogram.utils';
-import { RegisterUserDto } from './dto/user.dto';
-import { adminUser, chatRoom } from '@/database/models';
+import { UserRegisterDto } from './dto/user.dto';
+import { users, chatRoom } from '@/database/models';
 import { InjectModel } from '@nestjs/sequelize';
 
 @Injectable()
 export class UserService {
   constructor(
-    @InjectModel(adminUser) private userModel: typeof adminUser,
+    @InjectModel(users) private userModel: typeof users,
     @InjectModel(chatRoom) private chatRoomModel: typeof chatRoom,
   ) {}
 
@@ -79,11 +76,12 @@ export class UserService {
     }
   }
 
-  async register(reqBody: RegisterUserDto): Promise<any> {
-    const { accountName, realName, password, repassword, mobile } = reqBody;
+  async register(reqBody: UserRegisterDto): Promise<any> {
+    const { accountName, password, repassword, email, birthday, gender } =
+      reqBody;
     if (password !== repassword) {
       return {
-        code: 400,
+        code: 1,
         msg: '两次密码输入不一致',
         data: null,
       };
@@ -92,9 +90,16 @@ export class UserService {
       const user = await this.findOne(accountName);
       if (user) {
         return {
-          code: 400,
-          msg: '用户已存在',
+          code: 1,
+          msg: '该用户名已经被注册',
           data: null,
+        };
+      }
+
+      if (await this.checkoutRegisterEmail(email)) {
+        return {
+          code: 1,
+          msg: '账号邮箱已被注册',
         };
       }
 
@@ -104,10 +109,11 @@ export class UserService {
       await this.userModel.create(
         {
           accountName: accountName,
-          realName: realName,
           password: hashPwd,
           passwordSalt: salt,
-          mobile: mobile,
+          email: email,
+          birthday,
+          gender,
         },
         {
           logging: true,
@@ -125,10 +131,27 @@ export class UserService {
     }
   }
 
+  async checkoutRegisterEmail(email: string): Promise<boolean> {
+    const user = await this.userModel.findOne({
+      where: {
+        email,
+      },
+      // raw: true,
+      // logging: true,
+    });
+
+    return !!user;
+  }
+
   async test() {
     const res = await this.chatRoomModel.create({
-      roomName: 'private-01',
-      type: 0,
+      chatName: 'private-01',
+    });
+
+    await this.chatRoomModel.destroy({
+      where: {
+        chatName: 'private-01',
+      },
     });
 
     return {
