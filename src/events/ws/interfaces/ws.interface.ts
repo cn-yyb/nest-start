@@ -1,7 +1,7 @@
 import { WebSocket } from 'ws';
 
 export interface CustomWebSocket extends WebSocket {
-  id: number;
+  uid: string;
   [x: string]: any;
 }
 

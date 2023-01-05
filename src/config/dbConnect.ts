@@ -9,7 +9,7 @@ const prodConfig: SequelizeModuleOptions = {
   password: 'root',
   database: 'start_db',
   logging: false, // 开启全局日志打印（建议单个查询开启）
-  // models: allModels,
+  // models: allModels, // 模块导入(开启自动导入后,可不加)
   autoLoadModels: true, // 自动加载模型
   synchronize: true,
   define: {
@@ -35,6 +35,11 @@ const prodConfig: SequelizeModuleOptions = {
     idle: 10000, // 如果一个线程 10 秒钟内没有被使用过的话，那么就释放线程
   },
   timezone: '+08:00',
+  dialectOptions: {
+    // 格式化时间格式
+    dateStrings: true,
+    typeCast: true,
+  },
 };
 
 const devConfig: SequelizeModuleOptions = {
@@ -62,8 +67,8 @@ const devConfig: SequelizeModuleOptions = {
   retryDelay: 3000,
   // 根据模型同步数据库表（慎用）
   sync: {
-    force: true,
-    // alter: true,
+    // force: true, // 强制同步,重建数据表 (慎用)
+    alter: true, // 比对同步
   },
   pool: {
     max: 10, // 连接池中最大连接数量
@@ -72,6 +77,11 @@ const devConfig: SequelizeModuleOptions = {
     idle: 10000, // 如果一个线程 10 秒钟内没有被使用过的话，那么就释放线程
   },
   timezone: '+08:00',
+  dialectOptions: {
+    // 格式化时间格式
+    dateStrings: true,
+    typeCast: true,
+  },
 };
 
 // 本地运行是没有 process.env.NODE_ENV 的，借此来区分[开发环境]和[生产环境]

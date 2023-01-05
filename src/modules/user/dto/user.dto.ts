@@ -3,17 +3,11 @@ import {
   IsNotEmpty,
   IsString,
   IsDateString,
-  IS_ENUM,
   Length,
+  IsOptional,
+  IsInt,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-// import { Default } from 'sequelize-typescript';
-
-export class CreateUserDto {
-  readonly username: string;
-  readonly password: string;
-  readonly tel: number;
-}
 
 export class UserRegisterDto {
   @ApiProperty({
@@ -51,6 +45,7 @@ export class UserRegisterDto {
   readonly birthday: string;
 
   @ApiProperty({ description: '验证码' })
+  @IsNotEmpty({ message: '验证码不能为空' })
   @IsString({ message: '验证码格式应为字符串格式' })
   @Length(6, 6, { message: '邮箱验证应为6个数字组成的字符串' })
   readonly emailCode: string;
@@ -76,4 +71,31 @@ export class UploadFileDto {
   @ApiProperty({ type: 'string', format: 'binary' })
   @IsNotEmpty({ message: 'file字段不能为空！' })
   readonly file: any;
+}
+
+export class GetUserInfoDto {
+  @ApiProperty({
+    description: '用户名',
+    example: 'zhangsan',
+    required: false,
+  })
+  @IsOptional()
+  @IsString({ message: '用户名数据类型应为 String 类型' })
+  readonly username: string;
+
+  @ApiProperty({
+    description: 'uid',
+    required: false,
+  })
+  @IsOptional()
+  @IsString({ message: 'uid 数据类型应为 String 类型' })
+  readonly uid: string;
+
+  @ApiProperty({
+    description: 'userId',
+    required: false,
+  })
+  @IsOptional()
+  @IsInt({ message: 'userId 必须是整数类型' })
+  readonly usreId: number;
 }

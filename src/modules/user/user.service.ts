@@ -1,14 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { encryptPassword, makeSalt } from '@/utils/cryptogram.utils';
-import { UserRegisterDto } from './dto/user.dto';
+import { GetUserInfoDto, UserRegisterDto } from './dto/user.dto';
 import { users, chatRoom } from '@/database/models';
 import { InjectModel } from '@nestjs/sequelize';
+import { EmailService } from '@/modules/email/email.service';
+// import { col, fn, Op, Sequelize } from 'sequelize';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectModel(users) private userModel: typeof users,
     @InjectModel(chatRoom) private chatRoomModel: typeof chatRoom,
+    private readonly emailService: EmailService,
   ) {}
 
   // 编辑和user模块相关的业务逻辑
@@ -32,19 +35,32 @@ export class UserService {
   }
 
   // 获取登录用户信息
-  async getUserSelfInfo(username: string) {
+  async getUserSelfInfo({ uid, username, usreId }: GetUserInfoDto) {
+    // 处理查询参数 优先级 uid > username > user_id
+    const where = {};
+    if (uid) {
+      where['uid'] = uid;
+    } else if (username) {
+      where['accountName'] = username;
+    } else if (usreId) {
+      where['usreId'] = usreId;
+    }
     try {
       const userInfo = await this.userModel.findOne({
-        attributes: [
-          ['user_id', 'userId'],
-          ['account_name', 'username'],
-          ['real_name', 'realName'],
-          'mobile',
-          'role',
-        ],
-        where: {
-          accountName: username,
+        attributes: {
+          exclude: ['password', 'passwordSalt', 'deletedAt'],
+          // include: [
+          //   [
+          //     fn('date_format', col('updated_at'), '%Y-%m-%d %H:%i:%s'),
+          //     'updatedAt',
+          //   ],
+          //   [
+          //     fn('date_format', col('created_at'), '%Y-%m-%d %H:%i:%s'),
+          //     'createdAt',
+          //   ],
+          // ],
         },
+        where,
         logging: true,
       });
 
@@ -61,6 +77,7 @@ export class UserService {
     }
   }
 
+  // 获取单个用户信息（token 验证）
   async findOne(username: string): Promise<any | undefined> {
     try {
       const user = await this.userModel.findOne({
@@ -76,9 +93,17 @@ export class UserService {
     }
   }
 
+  // 用户注册
   async register(reqBody: UserRegisterDto): Promise<any> {
-    const { accountName, password, repassword, email, birthday, gender } =
-      reqBody;
+    const {
+      accountName,
+      password,
+      repassword,
+      email,
+      birthday,
+      gender,
+      emailCode,
+    } = reqBody;
     if (password !== repassword) {
       return {
         code: 1,
@@ -90,7 +115,7 @@ export class UserService {
       const user = await this.findOne(accountName);
       if (user) {
         return {
-          code: 1,
+          code: 2,
           msg: '该用户名已经被注册',
           data: null,
         };
@@ -98,8 +123,23 @@ export class UserService {
 
       if (await this.checkoutRegisterEmail(email)) {
         return {
-          code: 1,
+          code: 3,
           msg: '账号邮箱已被注册',
+          data: null,
+        };
+      }
+
+      // 验证邮箱验证码
+      const verifyRes = await this.emailService.verifyEmailCode({
+        email,
+        emailCode,
+      });
+
+      if (verifyRes.code !== 0) {
+        return {
+          code: 4,
+          msg: verifyRes.msg,
+          data: null,
         };
       }
 
@@ -111,9 +151,10 @@ export class UserService {
           accountName: accountName,
           password: hashPwd,
           passwordSalt: salt,
-          email: email,
+          email,
           birthday,
           gender,
+          nickName: accountName,
         },
         {
           logging: true,
@@ -121,16 +162,17 @@ export class UserService {
       );
       return {
         code: 0,
-        msg: 'Success',
+        msg: 'success',
       };
     } catch (error) {
       return {
         code: 503,
-        msg: `Service error: ${error}`,
+        msg: `service error: ${error}`,
       };
     }
   }
 
+  // 校验用户邮箱是否已注册
   async checkoutRegisterEmail(email: string): Promise<boolean> {
     const user = await this.userModel.findOne({
       where: {
@@ -143,6 +185,7 @@ export class UserService {
     return !!user;
   }
 
+  // 测试
   async test() {
     const res = await this.chatRoomModel.create({
       chatName: 'private-01',

@@ -1,6 +1,6 @@
 import { Body, Controller, Post, UsePipes } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { EmialVerifyDto } from './dto/email.dto';
+import { EmialVerifyDto, SendEmialVerifyCodeDto } from './dto/email.dto';
 import { EmailService } from './email.service';
 import { ValidationPipe } from '@/pipe/validation.pipe';
 
@@ -9,14 +9,27 @@ import { ValidationPipe } from '@/pipe/validation.pipe';
 export class EmailController {
   constructor(private emailService: EmailService) {}
 
-  @ApiOperation({ summary: '邮箱验证' })
+  // send email verify code
+  @ApiOperation({ summary: '发送邮箱验证码' })
   @ApiBody({
-    description: '邮箱验证',
+    description: '发送邮箱验证码',
+    type: SendEmialVerifyCodeDto,
+  })
+  @UsePipes(new ValidationPipe())
+  @Post('sendCode')
+  async sendCode(@Body() body: SendEmialVerifyCodeDto) {
+    return this.emailService.sendEmailCode(body);
+  }
+
+  // verify email code
+  @ApiOperation({ summary: '校验邮箱验证码' })
+  @ApiBody({
+    description: '校验邮箱验证码',
     type: EmialVerifyDto,
   })
-  @UsePipes(new ValidationPipe()) // 使用管道验证
-  @Post('sendCode')
-  async sendCode(@Body() body: EmialVerifyDto) {
-    return this.emailService.sendEmailCode(body);
+  @UsePipes(new ValidationPipe())
+  @Post('verifyCode')
+  async verifyCode(@Body() body) {
+    return this.emailService.verifyEmailCode(body);
   }
 }

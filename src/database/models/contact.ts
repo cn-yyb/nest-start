@@ -51,7 +51,7 @@ export class contact
   })
   contactName?: string;
 
-  @Column({ allowNull: true, type: DataType.STRING(45), comment: '备注名称' })
+  @Column({ allowNull: true, type: DataType.STRING(45), comment: '备注' })
   remark?: string;
 
   @Column({

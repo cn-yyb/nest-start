@@ -7,9 +7,13 @@ import {
   UseGuards,
   UseInterceptors,
   UsePipes,
-  Request,
 } from '@nestjs/common';
-import { LoginDto, UserRegisterDto, UploadFileDto } from './dto/user.dto';
+import {
+  LoginDto,
+  UserRegisterDto,
+  UploadFileDto,
+  GetUserInfoDto,
+} from './dto/user.dto';
 import { UserService } from './user.service';
 import { AuthService } from '../auth/auth.service';
 import { AuthGuard } from '@nestjs/passport';
@@ -24,9 +28,9 @@ import { ValidationPipe } from '@/pipe/validation.pipe';
 import { FileInterceptor } from '@nestjs/platform-express/multer';
 import { Express } from 'express';
 import { diskStorage } from 'multer';
-import * as path from 'path';
-import * as moment from 'moment';
+import { extname } from 'path';
 import { BASE_PATH } from '@/constants/server.contants';
+import * as dayjs from 'dayjs';
 
 @ApiBearerAuth() // Swagger 的 JWT 验证
 @ApiTags('user') // 添加 接口标签 装饰器
@@ -80,10 +84,16 @@ export class UserController {
     }
   }
 
+  @ApiOperation({ summary: '获取用户信息' })
+  @ApiBody({
+    description: '优先级 uid > username > userId',
+    type: GetUserInfoDto,
+  })
+  @UsePipes(new ValidationPipe())
   @UseGuards(AuthGuard('jwt'))
   @Post('getUserInfo')
-  getUserInfo(@Body() body) {
-    return this.userService.getUserSelfInfo(body.username || '');
+  getUserInfo(@Body() body: GetUserInfoDto) {
+    return this.userService.getUserSelfInfo(body);
   }
 
   @ApiConsumes('multipart/form-data')
@@ -94,10 +104,10 @@ export class UserController {
   @UseInterceptors(
     FileInterceptor('file', {
       storage: diskStorage({
-        destination: `./upload/${moment().format('YYYYMMDD')}`,
+        destination: `./upload/${dayjs().format('YYYYMMDD')}`,
         filename: (_req, file, cb) => {
           // console.log(req, file);
-          cb(null, `${Date.now()}${path.extname(file.originalname)}`);
+          cb(null, `${Date.now()}${extname(file.originalname)}`);
         },
       }),
     }),
@@ -112,7 +122,7 @@ export class UserController {
         originalName: file.originalname,
         fileUrl: `${BASE_PATH}/${file.path.replace(/\\/g, '/')}`,
         filePath: `/${file.path.replace(/\\/g, '/')}`,
-        uploadDate: moment().format('YYYY-MM-DD hh:mm:ss'),
+        uploadDate: dayjs().format('YYYY-MM-DD HH:mm:ss'),
       },
     };
   }

@@ -40,9 +40,9 @@ export class AuthService {
   }
 
   // jwt 生成用户token
-  async certificate(user: any) {
-    const { username, userId, realName, role } = user;
-    const payload = { username, userId, realName, role };
+  async certificate(user: users) {
+    const { accountName, uid, role, status } = user;
+    const payload = { username: accountName, uid, role, status };
     try {
       return {
         code: 0,

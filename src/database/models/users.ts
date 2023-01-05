@@ -150,39 +150,6 @@ export class users
   @Column({ allowNull: true, type: DataType.STRING(120), comment: '用户头像' })
   avatar?: string;
 
-  @Column({
-    field: 'create_by',
-    allowNull: true,
-    type: DataType.SMALLINT,
-    comment: '创建人ID',
-  })
-  createBy?: number;
-
-  @Column({
-    field: 'update_by',
-    allowNull: true,
-    type: DataType.SMALLINT,
-    comment: '修改人ID',
-    defaultValue: '0',
-  })
-  updateBy?: number;
-
-  @Column({
-    field: 'create_at',
-    allowNull: true,
-    type: DataType.DATE,
-    comment: '创建时间',
-  })
-  createAt?: Date;
-
-  @Column({
-    field: 'update_at',
-    allowNull: true,
-    type: DataType.DATE,
-    comment: '修改时间',
-  })
-  updateAt?: Date;
-
   @Column({ field: 'created_at', allowNull: true, type: DataType.DATE })
   createdAt?: Date;
 

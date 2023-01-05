@@ -1,0 +1,4 @@
+export enum SERVER_EVENTS {
+  PING = 'SERVER_PING',
+  SEND_DATA = ' SERVER_SEND_DATA',
+}
