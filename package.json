@@ -21,7 +21,8 @@
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "prepare": "husky install",
     "lint:lint-staged": "lint-staged",
-    "sync-models": "npx stg -D mysql -h localhost -p 3306 -d start_db -u root -x root -i -C camel -o ./src/database/models -c -m -a ./src/database/associations.csv"
+    "sync-models": "npx stg -D mysql -h localhost -p 3306 -d start_db -u root -x root -i -C camel -o ./src/database/models -c -m -a ./src/database/associations.csv",
+    "getlog": "conventional-changelog -p angular -i CHANGELOG.md -s"
   },
   "dependencies": {
     "@nestjs-modules/mailer": "^1.8.1",
@@ -78,6 +79,7 @@
     "@types/ws": "^8.5.3",
     "@typescript-eslint/eslint-plugin": "^5.0.0",
     "@typescript-eslint/parser": "^5.0.0",
+    "conventional-changelog-cli": "^2.2.2",
     "eslint": "^8.0.1",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^4.0.0",
