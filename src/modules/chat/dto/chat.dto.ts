@@ -2,11 +2,11 @@
  * @Author: zq
  * @Date: 2023-01-05 16:13:09
  * @Last Modified by: zq
- * @Last Modified time: 2023-01-05 16:22:54
+ * @Last Modified time: 2023-01-06 10:53:14
  */
 
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString, IsUUID } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsString, IsUUID } from 'class-validator';
 
 export class ApplyFriendFormDto {
   @ApiProperty({
@@ -29,4 +29,13 @@ export class ApplyFriendFormDto {
   @IsNotEmpty({ message: 'verifyMsg 不能为空' })
   @IsString({ message: 'verifyMsg 字段为 String 类型' })
   readonly verifyMsg: string;
+}
+
+export class AgreeFriendApplicationDto {
+  @ApiProperty({
+    description: '好友申请记录id',
+  })
+  @IsNotEmpty({ message: 'id 不能为空' })
+  @IsNumber({}, { message: 'id 字段必须是 Number 类型' })
+  readonly id: number;
 }

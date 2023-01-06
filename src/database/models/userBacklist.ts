@@ -23,9 +23,9 @@ export class userBacklist
   @Index({ name: 'PRIMARY', using: 'BTREE', order: 'ASC', unique: true })
   id?: number;
 
-  @Column({ type: DataType.CHAR(32) })
+  @Column({ type: DataType.CHAR(36) })
   uid!: string;
 
-  @Column({ field: 'target_uid', type: DataType.CHAR(32) })
+  @Column({ field: 'target_uid', type: DataType.CHAR(36) })
   targetUid!: string;
 }

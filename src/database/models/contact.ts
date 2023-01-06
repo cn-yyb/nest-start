@@ -12,10 +12,14 @@ export interface contactAttributes {
   contactId?: number;
   uid: string;
   groupId?: number;
-  chatId: number;
+  chatId?: number;
+  friendUid?: string;
   contactName?: string;
   remark?: string;
   type?: number;
+  createdAt: Date;
+  updatedAt: Date;
+  deletedAt?: Date;
 }
 
 @Table({ tableName: 'contact', timestamps: true })
@@ -40,8 +44,11 @@ export class contact
   @Column({ field: 'group_id', allowNull: true, type: DataType.INTEGER })
   groupId?: number;
 
-  @Column({ field: 'chat_id', type: DataType.SMALLINT })
-  chatId!: number;
+  @Column({ field: 'chat_id', allowNull: true, type: DataType.SMALLINT })
+  chatId?: number;
+
+  @Column({ field: 'friend_uid', allowNull: true, type: DataType.CHAR(36) })
+  friendUid?: string;
 
   @Column({
     field: 'contact_name',
@@ -61,4 +68,13 @@ export class contact
     defaultValue: '0',
   })
   type?: number;
+
+  @Column({ field: 'created_at', type: DataType.DATE })
+  createdAt!: Date;
+
+  @Column({ field: 'updated_at', type: DataType.DATE })
+  updatedAt!: Date;
+
+  @Column({ field: 'deleted_at', allowNull: true, type: DataType.DATE })
+  deletedAt?: Date;
 }

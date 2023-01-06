@@ -13,6 +13,7 @@ export interface contactGroupAttributes {
   uid: string;
   groupName?: string;
   groupOrder?: number;
+  type: number;
 }
 
 @Table({ tableName: 'contact_group', timestamps: true })
@@ -49,4 +50,11 @@ export class contactGroup
     comment: '分组排序',
   })
   groupOrder?: number;
+
+  @Column({
+    field: 'type',
+    type: DataType.INTEGER,
+    comment: '分类类型：0-系统初始默认 | 1-系统默认 | 2-用户自定义 ',
+  })
+  type: number;
 }
