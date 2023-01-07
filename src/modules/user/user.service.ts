@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { encryptPassword, makeSalt } from '@/utils/cryptogram.utils';
 import { GetUserInfoDto, UserRegisterDto } from './dto/user.dto';
-import { users, chatRoom } from '@/database/models';
+import { users, chatRoom, contactGroup } from '@/database/models';
 import { InjectModel } from '@nestjs/sequelize';
 import { EmailService } from '@/modules/email/email.service';
 // import { col, fn, Op, Sequelize } from 'sequelize';
@@ -11,6 +11,7 @@ export class UserService {
   constructor(
     @InjectModel(users) private userModel: typeof users,
     @InjectModel(chatRoom) private chatRoomModel: typeof chatRoom,
+    @InjectModel(contactGroup) private contactGroupModel: typeof contactGroup,
     private readonly emailService: EmailService,
   ) {}
 
@@ -146,7 +147,7 @@ export class UserService {
       const salt = makeSalt(); // 制作密码盐
       const hashPwd = encryptPassword(password, salt); // 加密密码
 
-      await this.userModel.create(
+      const userRecord = await this.userModel.create(
         {
           accountName: accountName,
           password: hashPwd,
@@ -160,6 +161,20 @@ export class UserService {
           logging: true,
         },
       );
+
+      // 新用户初始化分组
+      await this.contactGroupModel.create(
+        {
+          uid: userRecord.uid,
+          type: 0,
+          groupName: '我的好友',
+          groupOrder: -1,
+        },
+        {
+          logging: true,
+        },
+      );
+
       return {
         code: 0,
         msg: 'success',

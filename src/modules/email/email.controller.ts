@@ -29,7 +29,7 @@ export class EmailController {
   })
   @UsePipes(new ValidationPipe())
   @Post('verifyCode')
-  async verifyCode(@Body() body) {
+  async verifyCode(@Body() body: EmialVerifyDto) {
     return this.emailService.verifyEmailCode(body);
   }
 }

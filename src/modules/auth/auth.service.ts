@@ -3,6 +3,8 @@ import { UserService } from '@/modules/user/user.service';
 import { JwtService } from '@nestjs/jwt';
 import { encryptPassword } from '@/utils/cryptogram.utils';
 import { users } from '@/database/models';
+import { UserTokenSign } from './auth.interface';
+import { jwtConstants } from './constants';
 
 @Injectable()
 export class AuthService {
@@ -57,5 +59,18 @@ export class AuthService {
         msg: error,
       };
     }
+  }
+
+  /**
+   *  解析 token 返回token内的信息
+   * @param token token
+   * @param hasType 是否存在类型前缀 如: Bearer
+   * @returns {UserTokenSign} UserTokenSign
+   */
+  async formatTokenInfo(token: string, hasType = true): Promise<UserTokenSign> {
+    const _token = hasType ? token.split(' ')[1] : token;
+    return await this.jwtService.verifyAsync(_token, {
+      secret: jwtConstants.secret,
+    });
   }
 }

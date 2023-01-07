@@ -3,10 +3,13 @@ import {
   contact,
   contactGroup,
   userApply,
+  userBlacklist,
   users,
 } from '@/database/models';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
+import { Op } from 'sequelize';
+import { AuthService } from '../auth/auth.service';
 import { AgreeFriendApplicationDto, ApplyFriendFormDto } from './dto/chat.dto';
 
 @Injectable()
@@ -17,18 +20,43 @@ export class ChatService {
     @InjectModel(userApply) private userApplyModel: typeof userApply,
     @InjectModel(contact) private contactModel: typeof contact,
     @InjectModel(contactGroup) private contactGroupModel: typeof contactGroup,
+    @InjectModel(userBlacklist) private userBacklistModel: typeof userBlacklist,
+    private readonly authService: AuthService,
   ) {}
 
-  async applyNewFriend(applicationForm: ApplyFriendFormDto) {
+  async applyNewFriend(applicationForm: ApplyFriendFormDto, token: string) {
     console.log('applyNewFriend');
-    const { friendUid, applicantUid, verifyMsg } = applicationForm;
+    const { friendUid, verifyMsg } = applicationForm;
 
     // 将用户申请信息添加至申请名单内
     try {
+      const userInfo = await this.authService.formatTokenInfo(token);
+
+      if (userInfo.uid === friendUid) {
+        return {
+          code: 3,
+          msg: '不能添加自己为好友!',
+        };
+      }
+      // 拉黑判断
+      const blackListRecord = await this.userBacklistModel.findOne({
+        where: {
+          uid: friendUid,
+          targetUid: userInfo.uid,
+        },
+      });
+
+      if (blackListRecord) {
+        return {
+          code: 4,
+          msg: '你已经被对方拉黑,不能添加为好友!',
+        };
+      }
+
       // 判断是否已经是好友
       const contactInfo = await this.contactModel.findOne({
         where: {
-          uid: applicantUid,
+          uid: userInfo.uid,
           friendUid,
         },
       });
@@ -36,18 +64,18 @@ export class ChatService {
       if (contactInfo) {
         return {
           code: 1,
-          msg: `已和uid：${friendUid}}互为好友！`,
+          msg: `已和uid：${friendUid}互为好友！`,
         };
       }
 
       // 判断是否存在申请信息
       const [, created] = await this.userApplyModel.findOrCreate({
         where: {
-          applyUid: applicantUid,
+          applyUid: userInfo.uid,
           friendUid,
         },
         defaults: {
-          applyUid: applicantUid,
+          applyUid: userInfo.uid,
           friendUid,
           verifyMsg,
         },
@@ -85,32 +113,14 @@ export class ChatService {
           status: 1,
         });
 
-        // 判断是否存在初始默认分组
-        const [chatGroupRecord] = await this.contactGroupModel.findOrCreate({
-          where: {
-            uid: record.applyUid,
-            type: 0,
-          },
-          defaults: {
-            uid: record.applyUid,
-            type: 0,
-            groupName: '我的好友',
-            groupOrder: -1,
-          },
-        });
-
-        const [firendchatGroupRecord] =
-          await this.contactGroupModel.findOrCreate({
+        const [chatGroupRecord, firendchatGroupRecord] =
+          await this.contactGroupModel.findAll({
             where: {
-              uid: record.friendUid,
-              type: 0,
+              uid: {
+                [Op.or]: [record.applyUid, record.friendUid],
+              },
             },
-            defaults: {
-              uid: record.friendUid,
-              type: 0,
-              groupName: '我的好友',
-              groupOrder: -1,
-            },
+            raw: true,
           });
 
         // 更新联系人记录
@@ -156,11 +166,11 @@ export class ChatService {
           const chatRoomRecord = await this.chatRoomModel.create();
 
           await contactRecord.update({
-            chatId: chatRoomRecord.id,
+            chatId: chatRoomRecord.chatId,
           });
 
           await friendContactRecord.update({
-            chatId: chatRoomRecord.id,
+            chatId: chatRoomRecord.chatId,
           });
         }
 
@@ -200,8 +210,31 @@ export class ChatService {
     console.log('rebackChatRecord');
   }
 
-  getContactList() {
+  async getContactList(token: string) {
     console.log('rebackChatRecord');
+    try {
+      const userInfo = await this.authService.formatTokenInfo(token);
+
+      const record = await this.contactModel.findAll({
+        where: {
+          uid: userInfo.uid,
+        },
+        attributes: {
+          exclude: ['uid', 'deletedAt'],
+        },
+        raw: true,
+        logging: true,
+      });
+
+      return {
+        code: 0,
+        msg: 'success',
+        data: record,
+      };
+    } catch (error) {
+      console.log('rebackChatRecord Error:', error);
+      throw error;
+    }
   }
 
   getContectGroups() {

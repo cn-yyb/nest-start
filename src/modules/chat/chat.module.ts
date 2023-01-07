@@ -8,7 +8,10 @@ import {
   contactGroup,
   userApply,
   users,
+  userBlacklist,
 } from '@/database/models';
+import { JwtModule } from '@nestjs/jwt';
+import { AuthModule } from '../auth/auth.module';
 
 @Module({
   imports: [
@@ -18,7 +21,10 @@ import {
       userApply,
       contact,
       contactGroup,
+      userBlacklist,
     ]),
+    JwtModule,
+    AuthModule,
   ],
   providers: [ChatService],
   controllers: [ChatController],

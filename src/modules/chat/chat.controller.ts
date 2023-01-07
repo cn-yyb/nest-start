@@ -1,6 +1,8 @@
 import {
   Body,
   Controller,
+  Get,
+  Headers,
   Post,
   UsePipes,
   ValidationPipe,
@@ -22,8 +24,12 @@ export class ChatController {
   })
   @UsePipes(new ValidationPipe()) // 使用管道验证
   @Post('apply')
-  async applyNewFirend(@Body() applyDto: ApplyFriendFormDto) {
-    return await this.chatService.applyNewFriend(applyDto);
+  async applyNewFirend(
+    @Body() applyDto: ApplyFriendFormDto,
+    @Headers() headers: Record<string, string>,
+  ) {
+    const token = headers['authorization'];
+    return await this.chatService.applyNewFriend(applyDto, token);
   }
 
   @ApiOperation({ summary: '通过好友申请验证' })
@@ -35,5 +41,13 @@ export class ChatController {
   @Post('apply/pass')
   async agreeApplication(@Body() dataDto: AgreeFriendApplicationDto) {
     return await this.chatService.agreeFirendAppliaction(dataDto);
+  }
+
+  @ApiOperation({ summary: '获取联系人列表' })
+  @UsePipes(new ValidationPipe()) // 使用管道验证
+  @Get('contacts')
+  async getContacts(@Headers() headers: Record<string, string>) {
+    const token = headers['authorization'];
+    return await this.chatService.getContactList(token);
   }
 }

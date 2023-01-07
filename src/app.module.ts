@@ -8,12 +8,11 @@ import { AuthModule } from './modules/auth/auth.module';
 import { EmailModule } from './modules/email/email.module';
 import { ChatModule } from './modules/chat/chat.module';
 
+import { WsModule } from './events/ws/ws.module';
+
 import { UserController } from './modules/user/user.controller';
 import { StatusMonitorModule } from 'nestjs-status-monitor';
 import statusMonitorConfig from './config/statusMonitor';
-
-import { WsGateway } from './events/ws/ws.gateway';
-// import { WsModule } from './events/ws/ws.module';
 
 import { SequelizeModule } from '@nestjs/sequelize';
 
@@ -33,7 +32,7 @@ import dbConfig from './config/dbConnect';
     AuthModule,
     EmailModule,
     ChatModule,
-    // WsModule,
+    WsModule,
     // 项目状态监控模块
     StatusMonitorModule.forRoot(statusMonitorConfig),
     // 项目配置参数模块
@@ -43,6 +42,6 @@ import dbConfig from './config/dbConnect';
     SequelizeModule.forRoot(dbConfig),
   ],
   controllers: [AppController, UserController],
-  providers: [AppService, WsGateway],
+  providers: [AppService],
 })
 export class AppModule {}

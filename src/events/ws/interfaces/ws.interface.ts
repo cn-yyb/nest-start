@@ -15,9 +15,20 @@ export interface MsgTypes {
   [x: string]: any;
 }
 
-export interface WSMsgType {
+export interface WSMsgType<T = any> {
   event: string;
-  data: string;
+  data: T;
   time: string;
+  status?: number;
   meta?: object;
+}
+
+export interface ChatMsgType {
+  contactId: number;
+  msg: any;
+}
+
+export interface ReceiverMsg {
+  receivers: string[];
+  responseData: any;
 }

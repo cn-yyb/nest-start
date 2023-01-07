@@ -17,13 +17,6 @@ export class ApplyFriendFormDto {
   readonly friendUid: string;
 
   @ApiProperty({
-    description: '申请人的uid',
-  })
-  @IsNotEmpty({ message: 'applicantUid 不能为空' })
-  @IsUUID('4', { message: 'applicantUid 字段格式为 UUID4' })
-  readonly applicantUid: string;
-
-  @ApiProperty({
     description: '验证消息',
   })
   @IsNotEmpty({ message: 'verifyMsg 不能为空' })

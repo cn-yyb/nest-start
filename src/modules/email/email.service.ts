@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ISendMailOptions, MailerService } from '@nestjs-modules/mailer';
-import { SendEmialVerifyCodeDto } from './dto/email.dto';
-import { UpdateEmailVerify, VerifyEmailCodeParmas } from './types/emial.type';
+import { EmialVerifyDto, SendEmialVerifyCodeDto } from './dto/email.dto';
+import { UpdateEmailVerify } from './types/emial.type';
 import { emailVerify } from '@/database/models';
 import { InjectModel } from '@nestjs/sequelize';
 import * as dayjs from 'dayjs';
@@ -93,7 +93,7 @@ export class EmailService {
    * @param data {VerifyEmailCodeParmas} 验证信息
    * @returns
    */
-  async verifyEmailCode(data: VerifyEmailCodeParmas) {
+  async verifyEmailCode(data: EmialVerifyDto) {
     try {
       const { emailCode, email } = data;
 

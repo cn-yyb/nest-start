@@ -11,19 +11,20 @@ import {
 } from '@nestjs/websockets';
 import { IncomingMessage } from 'http';
 
-import * as WebSocket from 'ws';
+import { Server } from 'ws';
+import * as dayjs from 'dayjs';
+
 import {
+  ChatMsgType,
   CustomWebSocket,
   MsgTypes,
   WSMsgType,
 } from './interfaces/ws.interface';
 
-import { JwtService } from '@nestjs/jwt';
-import { jwtConstants } from '@/modules/auth/constants';
-import { UserTokenSign } from '@/modules/auth/auth.interface';
-import { SERVER_EVENTS } from './events/server.events';
-import * as dayjs from 'dayjs';
 import { CLIENT_EVENTS } from './events/client.events';
+import { SERVER_EVENTS } from './events/server.events';
+import { WsService } from './ws.service';
+import { AuthService } from '@/modules/auth/auth.service';
 
 @WebSocketGateway(8001, {
   cors: {
@@ -33,12 +34,20 @@ import { CLIENT_EVENTS } from './events/client.events';
 export class WsGateway
   implements OnGatewayDisconnect, OnGatewayConnection, OnGatewayInit
 {
-  private clienters: Set<string> = new Set();
-  private readonly jwtService: JwtService = new JwtService();
+  constructor(
+    private readonly wsService: WsService,
+    private readonly authService: AuthService,
+  ) {}
 
-  @WebSocketServer() server: WebSocket.Server;
+  // private readonly jwtService: JwtService = new JwtService();
 
-  afterInit(server: WebSocket.Server) {
+  @WebSocketServer() private server: Server;
+
+  get clients() {
+    return this.server.clients;
+  }
+
+  afterInit(server: Server) {
     Logger.log('websocket server init successfully!', 'websocket');
     // 此处可以监听 ws 各种事件(等同于 handleConnection)
     server.on('connection', (socket, _req) => {
@@ -49,7 +58,7 @@ export class WsGateway
 
       socket.on('error', () => {
         console.log('======= websockets error！ =======');
-        this.clienters.clear();
+        this.wsService.clearAllClienter();
       });
     });
   }
@@ -62,18 +71,22 @@ export class WsGateway
 
     // 解析token数据
     try {
-      const jwtInfo: UserTokenSign = await this.jwtService.verifyAsync(token, {
-        secret: jwtConstants.secret,
-      });
+      // const jwtInfo: UserTokenSign = await this.jwtService.verifyAsync(token, {
+      //   secret: jwtConstants.secret,
+      // });
+      const jwtInfo = await this.authService.formatTokenInfo(token, false);
       client.uid = jwtInfo.uid;
-      this.clienters.add(jwtInfo.uid);
 
-      console.log('new client is connected, uid: ', jwtInfo.uid, [
-        ...this.clienters,
-      ]);
+      this.wsService.pushOnlineClienter(jwtInfo.uid);
+
+      console.log(
+        'new client is connected, uid: ',
+        jwtInfo.uid,
+        `, online clienter count: ${this.wsService.clientCount}`,
+      );
     } catch (error) {
       console.log('token verify error: ', error.toString());
-      client.close(1008, 'Invalid token. 无效 token');
+      client.close(1008, 'Invalid token.');
     }
 
     // client.id = +new Date();
@@ -93,7 +106,7 @@ export class WsGateway
   handleDisconnect(client: CustomWebSocket) {
     if (client.uid) {
       console.log('clienter is disconneted, uid:', client.uid);
-      this.clienters.delete(client.uid);
+      this.wsService.removeOnlineClienter(client.uid);
     }
   }
 
@@ -131,6 +144,18 @@ export class WsGateway
     );
   }
 
+  @SubscribeMessage(SERVER_EVENTS.SEND_CHAT_MSG)
+  async sendChatMsg(@MessageBody() { data }: WSMsgType<ChatMsgType>) {
+    if (!data.contactId) return;
+    const { receivers, responseData: msgData } =
+      await this.wsService.handleClinetChat(data);
+
+    this.sendClientsMsg(receivers, {
+      event: CLIENT_EVENTS.RECEIVE_CHAT_MSG,
+      data: msgData,
+    });
+  }
+
   @SubscribeMessage(SERVER_EVENTS.PING)
   pingServer() {
     return {
@@ -162,6 +187,15 @@ export class WsGateway
         } else {
           msg.selfId !== client.id && client.send(responseData);
         }
+      }
+    });
+  }
+
+  sendClientsMsg(uids: string[], msgData: object) {
+    this.clients.forEach((client: CustomWebSocket) => {
+      if (uids.includes(client.uid)) {
+        msgData['time'] = dayjs().format('YYYY-MM-DD HH:mm:ss');
+        client.send(JSON.stringify(msgData));
       }
     });
   }

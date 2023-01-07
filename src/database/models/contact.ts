@@ -17,8 +17,8 @@ export interface contactAttributes {
   contactName?: string;
   remark?: string;
   type?: number;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
   deletedAt?: Date;
 }
 
@@ -69,11 +69,11 @@ export class contact
   })
   type?: number;
 
-  @Column({ field: 'created_at', type: DataType.DATE })
-  createdAt!: Date;
+  @Column({ field: 'created_at', allowNull: true, type: DataType.DATE })
+  createdAt?: Date;
 
-  @Column({ field: 'updated_at', type: DataType.DATE })
-  updatedAt!: Date;
+  @Column({ field: 'updated_at', allowNull: true, type: DataType.DATE })
+  updatedAt?: Date;
 
   @Column({ field: 'deleted_at', allowNull: true, type: DataType.DATE })
   deletedAt?: Date;
