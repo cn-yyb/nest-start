@@ -191,9 +191,15 @@ export class WsGateway
     });
   }
 
-  sendClientsMsg(uids: string[], msgData: object) {
+  /**
+   *
+   * @param uids 指定需要发送的用户uid数组
+   * @param msgData 消息数据
+   * @param isAll 是否开启全体广播(为true时 uids 参数无效)
+   */
+  sendClientsMsg(uids: string[], msgData: object, isAll = false) {
     this.clients.forEach((client: CustomWebSocket) => {
-      if (uids.includes(client.uid)) {
+      if (isAll || uids.includes(client.uid)) {
         msgData['time'] = dayjs().format('YYYY-MM-DD HH:mm:ss');
         client.send(JSON.stringify(msgData));
       }

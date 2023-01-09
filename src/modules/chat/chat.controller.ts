@@ -1,12 +1,15 @@
+import { Token } from '@/decorator';
 import {
   Body,
   Controller,
   Get,
   Headers,
   Post,
+  UseGuards,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ChatService } from './chat.service';
 import { ApplyFriendFormDto, AgreeFriendApplicationDto } from './dto/chat.dto';
@@ -22,13 +25,13 @@ export class ChatController {
     description: '好友申请',
     type: ApplyFriendFormDto,
   })
-  @UsePipes(new ValidationPipe()) // 使用管道验证
+  @UsePipes(new ValidationPipe())
+  @UseGuards(AuthGuard('jwt'))
   @Post('apply')
   async applyNewFirend(
     @Body() applyDto: ApplyFriendFormDto,
-    @Headers() headers: Record<string, string>,
+    @Token() token: string,
   ) {
-    const token = headers['authorization'];
     return await this.chatService.applyNewFriend(applyDto, token);
   }
 
@@ -37,17 +40,18 @@ export class ChatController {
     description: '通过好友申请验证',
     type: AgreeFriendApplicationDto,
   })
-  @UsePipes(new ValidationPipe()) // 使用管道验证
+  @UsePipes(new ValidationPipe())
+  @UseGuards(AuthGuard('jwt'))
   @Post('apply/pass')
   async agreeApplication(@Body() dataDto: AgreeFriendApplicationDto) {
     return await this.chatService.agreeFirendAppliaction(dataDto);
   }
 
   @ApiOperation({ summary: '获取联系人列表' })
-  @UsePipes(new ValidationPipe()) // 使用管道验证
+  @UsePipes(new ValidationPipe())
+  @UseGuards(AuthGuard('jwt'))
   @Get('contacts')
-  async getContacts(@Headers() headers: Record<string, string>) {
-    const token = headers['authorization'];
+  async getContacts(@Token() token: string) {
     return await this.chatService.getContactList(token);
   }
 }

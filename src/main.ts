@@ -8,7 +8,7 @@ import { logger } from './middleware/logger.middleware';
 // swagger
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { PORT, ROUTE_PREFIX } from './constants/server.contants';
-import { Logger } from '@nestjs/common';
+import { Logger, VersioningType } from '@nestjs/common';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { join, resolve } from 'path';
 import { WsAdapter } from './events/ws/ws.adapter';
@@ -29,6 +29,11 @@ async function bootstrap() {
   app.enableCors({ origin: '*', credentials: true });
   // todo 设置全局路由前缀
   app.setGlobalPrefix(ROUTE_PREFIX);
+  // 声明全局接口版本
+  // app.enableVersioning({
+  //   type: VersioningType.URI,
+  //   defaultVersion: '1',
+  // });
   // 解析处理 json & 表单数据
   app.use(express.json()); // For parsing application/json
   app.use(express.urlencoded({ extended: true })); // For parsing application/x-www-form-urlencoded

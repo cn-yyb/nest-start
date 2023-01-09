@@ -1,4 +1,5 @@
 import { users, chatRoom, contactGroup } from '@/database/models';
+import { WsModule } from '@/events/ws/ws.module';
 import { Module } from '@nestjs/common';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { EmailModule } from '../email/email.module';
@@ -10,6 +11,7 @@ import { UserService } from './user.service';
   imports: [
     SequelizeModule.forFeature([users, chatRoom, contactGroup]),
     EmailModule,
+    // WsModule,
   ],
   providers: [UserService],
   exports: [UserService],

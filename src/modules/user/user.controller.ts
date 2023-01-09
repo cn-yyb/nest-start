@@ -31,6 +31,7 @@ import { diskStorage } from 'multer';
 import { extname } from 'path';
 import { BASE_PATH } from '@/constants/server.contants';
 import * as dayjs from 'dayjs';
+import { WsGateway } from '@/events/ws/ws.gateway';
 
 @ApiBearerAuth() // Swagger 的 JWT 验证
 @ApiTags('user') // 添加 接口标签 装饰器
@@ -40,6 +41,7 @@ export class UserController {
   constructor(
     private readonly userService: UserService,
     private readonly authService: AuthService,
+    private readonly wsGateway: WsGateway,
   ) {}
 
   @ApiOperation({ summary: '用户注册' })
