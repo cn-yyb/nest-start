@@ -6,12 +6,23 @@ import { WsGateway } from './events/ws/ws.gateway';
 export class AppController {
   constructor(
     private readonly appService: AppService,
-    private readonly ws: WsGateway,
+    private readonly wsGateway: WsGateway,
   ) {}
 
-  @Get('getHello')
-  getHello() {
-    this.ws.sendClientsMsg([], { data: '2222222222' }, true);
-    return 'Hello world!';
+  @Get('test')
+  test() {
+    this.wsGateway.sendClientsMsg(
+      [],
+      {
+        data: {
+          msg: '群发消息测试',
+          clientCount: this.wsGateway.clientCount,
+        },
+      },
+      true,
+    );
+    return {
+      clientCount: this.wsGateway.clientCount,
+    };
   }
 }

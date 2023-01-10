@@ -1,5 +1,5 @@
 import { NestFactory } from '@nestjs/core';
-import * as express from 'express';
+import { json, urlencoded } from 'express';
 import { AppModule } from './app.module';
 import { AnyExceptionFilter } from './filter/any-exception.filter';
 import { HttpExceptionFilter } from './filter/http-exception.filter';
@@ -12,12 +12,24 @@ import { Logger, VersioningType } from '@nestjs/common';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { join, resolve } from 'path';
 import { WsAdapter } from './events/ws/ws.adapter';
-import * as dotenv from 'dotenv';
-// dotenv.config();
+import { config as dotenvConfig } from 'dotenv';
 
-dotenv.config({
-  path: resolve(__dirname, `../.env.${process.env.NODE_ENV}`),
-});
+function initDotenvConfig() {
+  // 默认加载 .env 文件
+  dotenvConfig();
+  // 加载指定模式下的配置 env 文件, 覆盖默认参数
+  const configRecord = dotenvConfig({
+    path: resolve(__dirname, `../.env.${process.env.NODE_ENV}`),
+    override: true, // 开启重写
+  }).parsed;
+
+  if (!configRecord) {
+    Logger.error('项目配置文件不存在!', 'env');
+    // exit
+    process.exit(1);
+  }
+}
+initDotenvConfig();
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -35,8 +47,8 @@ async function bootstrap() {
   //   defaultVersion: '1',
   // });
   // 解析处理 json & 表单数据
-  app.use(express.json()); // For parsing application/json
-  app.use(express.urlencoded({ extended: true })); // For parsing application/x-www-form-urlencoded
+  app.use(json()); // For parsing application/json
+  app.use(urlencoded({ extended: true })); // For parsing application/x-www-form-urlencoded
   //  请求日志打印
   app.use(logger);
   // 全局拦截器

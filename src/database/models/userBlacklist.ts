@@ -12,8 +12,8 @@ export interface userBlacklistAttributes {
   id?: number;
   uid?: string;
   targetUid?: string;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
   deletedAt?: Date;
 }
 
@@ -32,11 +32,11 @@ export class userBlacklist
   @Column({ field: 'target_uid', allowNull: true, type: DataType.CHAR(36) })
   targetUid?: string;
 
-  @Column({ field: 'created_at', type: DataType.DATE })
-  createdAt!: Date;
+  @Column({ field: 'created_at', allowNull: true, type: DataType.DATE })
+  createdAt?: Date;
 
-  @Column({ field: 'updated_at', type: DataType.DATE })
-  updatedAt!: Date;
+  @Column({ field: 'updated_at', allowNull: true, type: DataType.DATE })
+  updatedAt?: Date;
 
   @Column({ field: 'deleted_at', allowNull: true, type: DataType.DATE })
   deletedAt?: Date;

@@ -41,10 +41,14 @@ export class WsGateway
 
   // private readonly jwtService: JwtService = new JwtService();
 
-  @WebSocketServer() private server: Server;
+  @WebSocketServer() public server: Server;
 
   get clients() {
-    return this.server.clients;
+    return this.server.clients as Set<CustomWebSocket>;
+  }
+
+  get clientCount() {
+    return this.clients.size;
   }
 
   afterInit(server: Server) {
@@ -156,11 +160,18 @@ export class WsGateway
     });
   }
 
+  /**
+   * websocket 心跳检测
+   * @param client
+   * @returns
+   */
   @SubscribeMessage(SERVER_EVENTS.PING)
-  pingServer() {
+  pingServer(@ConnectedSocket() client: CustomWebSocket) {
     return {
       event: CLIENT_EVENTS.PONG,
-      data: null,
+      data: {
+        uid: client.uid,
+      },
       time: dayjs().format('YYYY-MM-DD HH:mm:ss'),
     };
   }
@@ -192,7 +203,7 @@ export class WsGateway
   }
 
   /**
-   *
+   * 消息发送(支持群发)
    * @param uids 指定需要发送的用户uid数组
    * @param msgData 消息数据
    * @param isAll 是否开启全体广播(为true时 uids 参数无效)
@@ -204,5 +215,14 @@ export class WsGateway
         client.send(JSON.stringify(msgData));
       }
     });
+  }
+
+  /**
+   * 获取指定uid的连接对象
+   * @param uid uid
+   * @returns  websockt 连接对象
+   */
+  returnClientByUid(uid: string) {
+    return [...this.clients].find((item) => item.uid === uid);
   }
 }
