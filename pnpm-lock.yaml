@@ -39,6 +39,8 @@ specifiers:
   eslint-plugin-prettier: ^4.0.0
   event-loop-stats: ^1.4.1
   express: ^4.18.1
+  express-rate-limit: ^6.7.0
+  helmet: ^6.0.1
   husky: ^8.0.0
   jest: 28.0.3
   lint-staged: ^13.0.3
@@ -89,6 +91,8 @@ dependencies:
   ejs: registry.npmmirror.com/ejs/3.1.8
   event-loop-stats: 1.4.1
   express: 4.18.1
+  express-rate-limit: registry.npmmirror.com/express-rate-limit/6.7.0_express@4.18.1
+  helmet: registry.npmmirror.com/helmet/6.0.1
   lodash: 4.17.21
   log4js: 6.6.1
   multer: 1.4.5-lts.1
@@ -5675,7 +5679,7 @@ packages:
       '@types/ejs': registry.npmmirror.com/@types/ejs/3.1.1
       '@types/pug': registry.npmmirror.com/@types/pug/2.0.6
       ejs: registry.npmmirror.com/ejs/3.1.8
-      handlebars: registry.npmmirror.com/handlebars/4.7.6
+      handlebars: registry.npmmirror.com/handlebars/4.7.7
       pug: registry.npmmirror.com/pug/3.0.2
     transitivePeerDependencies:
       - encoding
@@ -6875,6 +6879,18 @@ packages:
     dev: false
     optional: true
 
+  registry.npmmirror.com/express-rate-limit/6.7.0_express@4.18.1:
+    resolution: {integrity: sha512-vhwIdRoqcYB/72TK3tRZI+0ttS8Ytrk24GfmsxDXK9o9IhHNO5bXRiXQSExPQ4GbaE5tvIS7j1SGrxsuWs+sGA==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/express-rate-limit/-/express-rate-limit-6.7.0.tgz}
+    id: registry.npmmirror.com/express-rate-limit/6.7.0
+    name: express-rate-limit
+    version: 6.7.0
+    engines: {node: '>= 12.9.0'}
+    peerDependencies:
+      express: ^4 || ^5
+    dependencies:
+      express: 4.18.1
+    dev: false
+
   registry.npmmirror.com/extract-css/3.0.0:
     resolution: {integrity: sha512-ZM2IuJkX79gys2PMN12yWrHvyK2sw1ReCdCtp/RAdgcFaBui+wY3Bsll9Em2LJXzKI8BYEBZLm2UczqyBCXSjQ==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/extract-css/-/extract-css-3.0.0.tgz}
     name: extract-css
@@ -7152,10 +7168,10 @@ packages:
     name: graceful-fs
     version: 4.2.10
 
-  registry.npmmirror.com/handlebars/4.7.6:
-    resolution: {integrity: sha512-1f2BACcBfiwAfStCKZNrUCgqNZkGsAT7UM3kkYtXuLo0KnaVfjKOyf7PRzB6++aK9STyT1Pd2ZCPe3EGOXleXA==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/handlebars/-/handlebars-4.7.6.tgz}
+  registry.npmmirror.com/handlebars/4.7.7:
+    resolution: {integrity: sha512-aAcXm5OAfE/8IXkcZvCepKU3VzW1/39Fb5ZuqMtgI/hT8X2YgoMvBY5dLhq/cpOvw7Lk1nK/UF71aLG/ZnVYRA==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/handlebars/-/handlebars-4.7.7.tgz}
     name: handlebars
-    version: 4.7.6
+    version: 4.7.7
     engines: {node: '>=0.4.7'}
     hasBin: true
     requiresBuild: true
@@ -7166,23 +7182,6 @@ packages:
       wordwrap: registry.npmmirror.com/wordwrap/1.0.0
     optionalDependencies:
       uglify-js: registry.npmmirror.com/uglify-js/3.16.3
-    dev: false
-    optional: true
-
-  registry.npmmirror.com/handlebars/4.7.7:
-    resolution: {integrity: sha512-aAcXm5OAfE/8IXkcZvCepKU3VzW1/39Fb5ZuqMtgI/hT8X2YgoMvBY5dLhq/cpOvw7Lk1nK/UF71aLG/ZnVYRA==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/handlebars/-/handlebars-4.7.7.tgz}
-    name: handlebars
-    version: 4.7.7
-    engines: {node: '>=0.4.7'}
-    hasBin: true
-    dependencies:
-      minimist: registry.npmmirror.com/minimist/1.2.6
-      neo-async: registry.npmmirror.com/neo-async/2.6.2
-      source-map: registry.npmmirror.com/source-map/0.6.1
-      wordwrap: registry.npmmirror.com/wordwrap/1.0.0
-    optionalDependencies:
-      uglify-js: registry.npmmirror.com/uglify-js/3.16.3
-    dev: true
 
   registry.npmmirror.com/hard-rejection/2.1.0:
     resolution: {integrity: sha512-VIZB+ibDhx7ObhAe7OVtoEbuP4h/MuOTHJ+J8h/eBXotJYl0fBgR72xDFCKgIh22OJZIOVNxBMWuhAr10r8HdA==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/hard-rejection/-/hard-rejection-2.1.0.tgz}
@@ -7232,6 +7231,13 @@ packages:
     name: he
     version: 1.2.0
     hasBin: true
+    dev: false
+
+  registry.npmmirror.com/helmet/6.0.1:
+    resolution: {integrity: sha512-8wo+VdQhTMVBMCITYZaGTbE4lvlthelPYSvoyNvk4RECTmrVjMerp9RfUOQXZWLvCcAn1pKj7ZRxK4lI9Alrcw==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/helmet/-/helmet-6.0.1.tgz}
+    name: helmet
+    version: 6.0.1
+    engines: {node: '>=14.0.0'}
     dev: false
 
   registry.npmmirror.com/hexoid/1.0.0:

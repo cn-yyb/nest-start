@@ -14,6 +14,10 @@ import { join, resolve } from 'path';
 import { WsAdapter } from './events/ws/ws.adapter';
 import { config as dotenvConfig } from 'dotenv';
 
+// safe
+import helmet from 'helmet';
+import rateLimit from 'express-rate-limit';
+
 function initDotenvConfig() {
   // 默认加载 .env 文件
   dotenvConfig();
@@ -61,6 +65,16 @@ async function bootstrap() {
   app.useStaticAssets(join(__dirname, '..', 'upload'), {
     prefix: '/upload',
   });
+
+  // 防范 xss 攻击
+  app.use(helmet());
+  // 高频请求限速处理
+  app.use(
+    rateLimit({
+      windowMs: 15 * 60 * 1000, // 15 minutes
+      max: 100, // limit each IP to 100 requests per windowMs
+    }),
+  );
 
   // 配置 Swagger
   const options = new DocumentBuilder()

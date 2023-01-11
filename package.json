@@ -44,6 +44,8 @@
     "ejs": "^3.1.8",
     "event-loop-stats": "^1.4.1",
     "express": "^4.18.1",
+    "express-rate-limit": "^6.7.0",
+    "helmet": "^6.0.1",
     "lodash": "^4.17.21",
     "log4js": "^6.6.1",
     "multer": "1.4.5-lts.1",
