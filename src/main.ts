@@ -73,8 +73,17 @@ async function bootstrap() {
     rateLimit({
       windowMs: 15 * 60 * 1000, // 15 minutes
       max: 100, // limit each IP to 100 requests per windowMs
+      standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+      legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+      message: {
+        code: 429,
+        msg: 'Too many requestions created from this IP, please try again after 15 monutes',
+      },
     }),
   );
+
+  // 设置默认模板引擎
+  app.setViewEngine('ejs');
 
   // 配置 Swagger
   const options = new DocumentBuilder()
@@ -92,6 +101,7 @@ async function bootstrap() {
     app,
     SwaggerModule.createDocument(app, options),
   );
+
   // server start
   await app.listen(PORT, () => {
     Logger.log('==========================================================');

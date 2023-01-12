@@ -22,7 +22,12 @@ export class AppController {
       true,
     );
     return {
-      clientCount: this.wsGateway.clientCount,
+      code: 0,
+      data: {
+        clientCount: this.wsGateway.clientCount,
+        text: 'hello world!',
+      },
+      msg: 'success',
     };
   }
 }
