@@ -9,6 +9,7 @@ import {
   userApply,
   users,
   userBlacklist,
+  message,
 } from '@/database/models';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthModule } from '../auth/auth.module';
@@ -22,6 +23,7 @@ import { AuthModule } from '../auth/auth.module';
       contact,
       contactGroup,
       userBlacklist,
+      message,
     ]),
     JwtModule,
     AuthModule,

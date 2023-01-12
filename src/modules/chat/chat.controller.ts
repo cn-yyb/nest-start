@@ -1,18 +1,31 @@
-import { Token } from '@/decorator';
+import { Token, User } from '@/decorator';
 import {
   Body,
   Controller,
   Get,
   Headers,
   Post,
+  Query,
   UseGuards,
   UsePipes,
-  ValidationPipe,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { ApiBearerAuth, ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiOperation,
+  ApiQuery,
+  ApiTags,
+} from '@nestjs/swagger';
+import { UserTokenSign } from '../auth/auth.interface';
 import { ChatService } from './chat.service';
-import { ApplyFriendFormDto, AgreeFriendApplicationDto } from './dto/chat.dto';
+import {
+  ApplyFriendFormDto,
+  AgreeFriendApplicationDto,
+  RequestChatRecordDto,
+} from './dto/chat.dto';
+
+import { ValidationPipe } from '@/pipe/validation.pipe';
 
 @ApiBearerAuth()
 @ApiTags('chat')
@@ -48,10 +61,21 @@ export class ChatController {
   }
 
   @ApiOperation({ summary: '获取联系人列表' })
-  @UsePipes(new ValidationPipe())
   @UseGuards(AuthGuard('jwt'))
   @Get('contacts')
   async getContacts(@Token() token: string) {
     return await this.chatService.getContactList(token);
+  }
+
+  @ApiOperation({ summary: '获取指定联系人的聊天记录' })
+  @ApiQuery({ description: '获取聊天记录', type: RequestChatRecordDto })
+  // @UsePipes(new ValidationPipe())
+  @UseGuards(AuthGuard('jwt'))
+  @Get('record')
+  async getChatRecord(
+    @Query() data: RequestChatRecordDto,
+    @User() user: UserTokenSign,
+  ) {
+    return await this.chatService.getChatRoomChatRecord(data, user.uid);
   }
 }

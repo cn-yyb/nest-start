@@ -6,7 +6,14 @@
  */
 
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsNumber, IsString, IsUUID } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsNumber,
+  IsString,
+  IsUUID,
+  max,
+  min,
+} from 'class-validator';
 
 export class ApplyFriendFormDto {
   @ApiProperty({
@@ -31,4 +38,27 @@ export class AgreeFriendApplicationDto {
   @IsNotEmpty({ message: 'id 不能为空' })
   @IsNumber({}, { message: 'id 字段必须是 Number 类型' })
   readonly id: number;
+}
+
+export class RequestChatRecordDto {
+  @ApiProperty({
+    description: '联系人ID',
+  })
+  @IsNotEmpty({ message: 'chatId 不能为空' })
+  @IsNumber({}, { message: 'chatId 字段必须是 Number 类型' })
+  readonly chatId: number;
+
+  @ApiProperty({
+    description: '页数',
+    default: 1,
+  })
+  @IsNumber({}, { message: 'current 字段必须是 Number 类型' })
+  readonly current: number;
+
+  @ApiProperty({
+    description: '页容量',
+    default: 20,
+  })
+  @IsNumber({}, { message: 'pageSize 字段必须是 Number 类型' })
+  readonly pageSize: number;
 }

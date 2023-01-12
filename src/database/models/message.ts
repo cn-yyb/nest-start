@@ -57,8 +57,9 @@ export class message
     field: 'msg_type',
     allowNull: true,
     type: DataType.INTEGER,
+    defaultValue: '0',
     comment:
-      '0-文字 | 1-图片 | 2-音频 | 3-视频 | 4-emoji | 5-文件 | 6-分享链接 | 7- 定位位置 ',
+      '0-文本 | 1-图片 | 2-音频 | 3-视频 | 4-emoji | 5-文件 | 6-分享链接 | 7-定位位置 ',
   })
   msgType?: number;
 

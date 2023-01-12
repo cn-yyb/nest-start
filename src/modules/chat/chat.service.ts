@@ -2,6 +2,7 @@ import {
   chatRoom,
   contact,
   contactGroup,
+  message,
   userApply,
   userBlacklist,
   users,
@@ -10,7 +11,11 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { Op } from 'sequelize';
 import { AuthService } from '../auth/auth.service';
-import { AgreeFriendApplicationDto, ApplyFriendFormDto } from './dto/chat.dto';
+import {
+  AgreeFriendApplicationDto,
+  ApplyFriendFormDto,
+  RequestChatRecordDto,
+} from './dto/chat.dto';
 
 @Injectable()
 export class ChatService {
@@ -21,6 +26,7 @@ export class ChatService {
     @InjectModel(contact) private contactModel: typeof contact,
     @InjectModel(contactGroup) private contactGroupModel: typeof contactGroup,
     @InjectModel(userBlacklist) private userBacklistModel: typeof userBlacklist,
+    @InjectModel(message) private messageModel: typeof message,
     private readonly authService: AuthService,
   ) {}
 
@@ -198,8 +204,45 @@ export class ChatService {
     console.log('removeFriend');
   }
 
-  getChatRoomChatRecord() {
+  async getChatRoomChatRecord(data: RequestChatRecordDto, selfUid: string) {
     console.log('getChatRoomChatRecord');
+
+    const current = parseInt(data.current + '') || 1;
+    const pageSize = parseInt(data.pageSize + '') || 20;
+
+    try {
+      const { count, rows } = await this.messageModel.findAndCountAll({
+        attributes: {
+          exclude: ['deletedAt'],
+        },
+        where: {
+          chatId: data.chatId,
+        },
+        order: [['createdAt', 'ASC']],
+        limit: pageSize,
+        offset: (current - 1) * pageSize,
+        raw: true,
+        logging: true,
+      });
+
+      return {
+        code: 0,
+        msg: 'success',
+        data: {
+          current,
+          pageSize,
+          pages: Math.ceil(count / pageSize),
+          total: count,
+          time: +new Date(),
+          data: rows.map((v: any) => {
+            v.isSelf = v.senderId === selfUid;
+            return v;
+          }),
+        },
+      };
+    } catch (error) {
+      // throw error;
+    }
   }
 
   getChatRoomInfo() {
