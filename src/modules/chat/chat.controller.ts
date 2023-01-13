@@ -68,12 +68,12 @@ export class ChatController {
   }
 
   @ApiOperation({ summary: '获取指定联系人的聊天记录' })
-  @ApiQuery({ description: '获取聊天记录', type: RequestChatRecordDto })
-  // @UsePipes(new ValidationPipe())
+  @ApiBody({ description: '获取聊天记录', type: RequestChatRecordDto })
+  @UsePipes(new ValidationPipe())
   @UseGuards(AuthGuard('jwt'))
-  @Get('record')
+  @Post('record')
   async getChatRecord(
-    @Query() data: RequestChatRecordDto,
+    @Body() data: RequestChatRecordDto,
     @User() user: UserTokenSign,
   ) {
     return await this.chatService.getChatRoomChatRecord(data, user.uid);

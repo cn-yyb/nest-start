@@ -4,6 +4,7 @@ import { GetUserInfoDto, UserRegisterDto } from './dto/user.dto';
 import { users, chatRoom, contactGroup } from '@/database/models';
 import { InjectModel } from '@nestjs/sequelize';
 import { EmailService } from '@/modules/email/email.service';
+import { formatJsonNull } from '@/utils/formatJson.utils';
 // import { col, fn, Op, Sequelize } from 'sequelize';
 
 @Injectable()

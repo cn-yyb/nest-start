@@ -9,6 +9,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import {
   IsNotEmpty,
   IsNumber,
+  IsOptional,
   IsString,
   IsUUID,
   max,
@@ -43,6 +44,7 @@ export class AgreeFriendApplicationDto {
 export class RequestChatRecordDto {
   @ApiProperty({
     description: '联系人ID',
+    required: true,
   })
   @IsNotEmpty({ message: 'chatId 不能为空' })
   @IsNumber({}, { message: 'chatId 字段必须是 Number 类型' })
@@ -52,6 +54,7 @@ export class RequestChatRecordDto {
     description: '页数',
     default: 1,
   })
+  @IsOptional()
   @IsNumber({}, { message: 'current 字段必须是 Number 类型' })
   readonly current: number;
 
@@ -59,6 +62,7 @@ export class RequestChatRecordDto {
     description: '页容量',
     default: 20,
   })
+  @IsOptional()
   @IsNumber({}, { message: 'pageSize 字段必须是 Number 类型' })
   readonly pageSize: number;
 }

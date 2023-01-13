@@ -33,10 +33,10 @@ export class WsService {
     return this.clienters.has(uid);
   }
 
-  async handleClinetChat({
-    contactId,
-    msg,
-  }: ChatMsgType): Promise<ReceiverMsg> {
+  async handleClinetChat(
+    { contactId, msg }: ChatMsgType,
+    selfUid: string,
+  ): Promise<ReceiverMsg | null> {
     try {
       // 获取联系信息
       const record = await this.contactModel.findOne({
@@ -45,6 +45,11 @@ export class WsService {
         },
         logging: true,
       });
+
+      // 避免使用他人账号给自己发消息
+      if (!record || record.uid !== selfUid) {
+        return null;
+      }
 
       if (record) {
         // 记录聊天记录

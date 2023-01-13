@@ -1,3 +1,4 @@
+import { formatJsonNull } from '@/utils/formatJson.utils';
 import {
   CallHandler,
   ExecutionContext,
@@ -23,7 +24,7 @@ export class TransformInterceptor implements NestInterceptor {
     <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<`;
         Logger.info(logFormat);
         Logger.access(logFormat);
-        return data;
+        return formatJsonNull(data);
       }),
     );
   }

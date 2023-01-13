@@ -12,7 +12,7 @@ import {
 export interface usersAttributes {
   userId?: number;
   uid: string;
-  accountName?: string;
+  accountName: string;
   nickName?: string;
   realName?: string;
   password?: string;
@@ -29,10 +29,6 @@ export interface usersAttributes {
   address?: string;
   sign?: string;
   avatar?: string;
-  createBy?: number;
-  updateBy?: number;
-  createAt?: Date;
-  updateAt?: Date;
   createdAt?: Date;
   updatedAt?: Date;
   deletedAt?: Date;
@@ -64,11 +60,10 @@ export class users
 
   @Column({
     field: 'account_name',
-    allowNull: true,
     type: DataType.STRING(24),
     comment: '用户账号',
   })
-  accountName?: string;
+  accountName!: string;
 
   @Column({
     field: 'nick_name',

@@ -12,8 +12,8 @@ export interface emailVerifyAttributes {
   id?: number;
   email?: string;
   verifyCode?: string;
-  expirationTime?: Date;
   indate?: number;
+  expirationTime?: Date;
   createdAt?: Date;
   updatedAt?: Date;
   deletedAt?: Date;
@@ -40,19 +40,19 @@ export class emailVerify
   verifyCode?: string;
 
   @Column({
+    allowNull: true,
+    type: DataType.INTEGER,
+    comment: '有效期（标准时间戳）',
+  })
+  indate?: number;
+
+  @Column({
     field: 'expiration_time',
     allowNull: true,
     type: DataType.DATE,
     comment: '过期时间',
   })
   expirationTime?: Date;
-
-  @Column({
-    allowNull: true,
-    type: DataType.INTEGER,
-    comment: '有效期（标准时间戳）',
-  })
-  indate?: number;
 
   @Column({ field: 'created_at', allowNull: true, type: DataType.DATE })
   createdAt?: Date;

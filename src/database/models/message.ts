@@ -12,13 +12,13 @@ export interface messageAttributes {
   msgId?: number;
   senderId: string;
   receiverId?: string;
+  chatId?: number;
   msgType?: number;
   content?: string;
   status?: number;
   createdAt?: Date;
   updatedAt?: Date;
   deletedAt?: Date;
-  chatId?: number;
 }
 
 @Table({ tableName: 'message', timestamps: true })
@@ -54,12 +54,20 @@ export class message
   receiverId?: string;
 
   @Column({
+    field: 'chat_id',
+    allowNull: true,
+    type: DataType.INTEGER,
+    comment: '房间号',
+  })
+  chatId?: number;
+
+  @Column({
     field: 'msg_type',
     allowNull: true,
     type: DataType.INTEGER,
-    defaultValue: '0',
     comment:
       '0-文本 | 1-图片 | 2-音频 | 3-视频 | 4-emoji | 5-文件 | 6-分享链接 | 7-定位位置 ',
+    defaultValue: '0',
   })
   msgType?: number;
 
@@ -82,12 +90,4 @@ export class message
 
   @Column({ field: 'deleted_at', allowNull: true, type: DataType.DATE })
   deletedAt?: Date;
-
-  @Column({
-    field: 'chat_id',
-    allowNull: true,
-    type: DataType.INTEGER,
-    comment: '房间号',
-  })
-  chatId?: number;
 }

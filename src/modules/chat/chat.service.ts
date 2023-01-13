@@ -233,11 +233,11 @@ export class ChatService {
           pageSize,
           pages: Math.ceil(count / pageSize),
           total: count,
-          time: +new Date(),
           data: rows.map((v: any) => {
             v.isSelf = v.senderId === selfUid;
             return v;
           }),
+          time: +new Date(),
         },
       };
     } catch (error) {

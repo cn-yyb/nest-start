@@ -149,10 +149,18 @@ export class WsGateway
   }
 
   @SubscribeMessage(SERVER_EVENTS.SEND_CHAT_MSG)
-  async sendChatMsg(@MessageBody() { data }: WSMsgType<ChatMsgType>) {
+  async sendChatMsg(
+    @MessageBody() { data }: WSMsgType<ChatMsgType>,
+    @ConnectedSocket() client: CustomWebSocket,
+  ) {
     if (!data.contactId) return;
-    const { receivers, responseData: msgData } =
-      await this.wsService.handleClinetChat(data);
+
+    const res = await this.wsService.handleClinetChat(data, client.uid);
+    if (!res) {
+      return;
+    }
+
+    const { receivers, responseData: msgData } = res;
 
     this.sendClientsMsg(receivers, {
       event: CLIENT_EVENTS.RECEIVE_CHAT_MSG,
