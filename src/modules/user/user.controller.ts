@@ -32,6 +32,8 @@ import { extname } from 'path';
 import { BASE_PATH } from '@/constants/server.contants';
 import * as dayjs from 'dayjs';
 import { WsGateway } from '@/events/ws/ws.gateway';
+import { User } from '@/decorator';
+import { UserTokenSign } from '../auth/auth.interface';
 
 @ApiBearerAuth() // Swagger 的 JWT 验证
 @ApiTags('user') // 添加 接口标签 装饰器
@@ -87,15 +89,10 @@ export class UserController {
   }
 
   @ApiOperation({ summary: '获取用户信息' })
-  @ApiBody({
-    description: '优先级 uid > username > userId',
-    type: GetUserInfoDto,
-  })
-  @UsePipes(new ValidationPipe())
   @UseGuards(AuthGuard('jwt'))
   @Post('getUserInfo')
-  getUserInfo(@Body() body: GetUserInfoDto) {
-    return this.userService.getUserSelfInfo(body);
+  getUserInfo(@User() user: UserTokenSign) {
+    return this.userService.getUserSelfInfo(user.uid);
   }
 
   @ApiConsumes('multipart/form-data')

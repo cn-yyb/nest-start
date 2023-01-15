@@ -83,6 +83,12 @@ export class WsGateway
 
       this.wsService.pushOnlineClienter(jwtInfo.uid);
 
+      // return connect info
+      this.sendClientsMsg([jwtInfo.uid], {
+        event: CLIENT_EVENTS.CONNECT_SUCCESS,
+        data: 'connect success',
+      });
+
       console.log(
         'new client is connected, uid: ',
         jwtInfo.uid,

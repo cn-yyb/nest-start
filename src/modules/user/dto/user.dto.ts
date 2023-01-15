@@ -53,10 +53,10 @@ export class UserRegisterDto {
 
 export class LoginDto {
   @ApiProperty({
-    description: '用户名',
-    example: 'zhangsan',
+    description: '用户名（或邮箱）',
+    example: 'zhangsan 或 xxx@163.com',
   })
-  @IsNotEmpty({ message: '用户名不能为空' })
+  @IsNotEmpty({ message: '用户名(或邮箱)不能为空' })
   readonly username: string;
 
   @ApiProperty({

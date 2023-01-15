@@ -5,6 +5,7 @@ import { users, chatRoom, contactGroup } from '@/database/models';
 import { InjectModel } from '@nestjs/sequelize';
 import { EmailService } from '@/modules/email/email.service';
 import { formatJsonNull } from '@/utils/formatJson.utils';
+import { Op } from 'sequelize';
 // import { col, fn, Op, Sequelize } from 'sequelize';
 
 @Injectable()
@@ -37,16 +38,16 @@ export class UserService {
   }
 
   // 获取登录用户信息
-  async getUserSelfInfo({ uid, username, usreId }: GetUserInfoDto) {
+  async getUserSelfInfo(uid: string) {
     // 处理查询参数 优先级 uid > username > user_id
-    const where = {};
-    if (uid) {
-      where['uid'] = uid;
-    } else if (username) {
-      where['accountName'] = username;
-    } else if (usreId) {
-      where['usreId'] = usreId;
-    }
+    // const where = {};
+    // if (uid) {
+    //   where['uid'] = uid;
+    // } else if (username) {
+    //   where['accountName'] = username;
+    // } else if (usreId) {
+    //   where['usreId'] = usreId;
+    // }
     try {
       const userInfo = await this.userModel.findOne({
         attributes: {
@@ -62,7 +63,9 @@ export class UserService {
           //   ],
           // ],
         },
-        where,
+        where: {
+          uid,
+        },
         logging: true,
       });
 
@@ -84,7 +87,12 @@ export class UserService {
     try {
       const user = await this.userModel.findOne({
         where: {
-          accountName: username,
+          [Op.or]: [
+            { accountName: username },
+            {
+              email: username,
+            },
+          ],
         },
         raw: true,
         logging: true,
