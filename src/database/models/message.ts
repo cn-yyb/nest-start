@@ -67,7 +67,7 @@ export class message
     type: DataType.INTEGER,
     comment:
       '0-文本 | 1-图片 | 2-音频 | 3-视频 | 4-emoji | 5-文件 | 6-分享链接 | 7-定位位置 ',
-    defaultValue: '0',
+    defaultValue: 0,
   })
   msgType?: number;
 
@@ -78,7 +78,7 @@ export class message
     allowNull: true,
     type: DataType.INTEGER,
     comment: '0-未读|1-已读|2-已撤回|3-已删除',
-    defaultValue: '0',
+    defaultValue: 0,
   })
   status?: number;
 

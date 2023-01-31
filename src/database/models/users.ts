@@ -104,7 +104,7 @@ export class users
     type: DataType.TINYINT,
     comment:
       '用户角色：0-超级管理员|1-管理员|2-开发&测试&运营|3-普通用户（只能查看）',
-    defaultValue: '3',
+    defaultValue: 3,
   })
   role?: number;
 
@@ -112,7 +112,7 @@ export class users
     allowNull: true,
     type: DataType.TINYINT,
     comment: '状态：0- 禁用|1-正常|2-注销',
-    defaultValue: '0',
+    defaultValue: 0,
   })
   status?: number;
 
@@ -123,7 +123,7 @@ export class users
     allowNull: true,
     type: DataType.TINYINT,
     comment: '性别 0-女 | 1-男 | -1 未知',
-    defaultValue: '-1',
+    defaultValue: -1,
   })
   gender?: number;
 

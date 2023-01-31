@@ -1,4 +1,4 @@
-import { contact, message } from '@/database/models';
+import { contact, message, users } from '@/database/models';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { Op } from 'sequelize';
@@ -9,6 +9,7 @@ export class WsService {
   constructor(
     @InjectModel(message) private messageModel: typeof message,
     @InjectModel(contact) private contactModel: typeof contact,
+    @InjectModel(users) private usersModel: typeof users,
   ) {}
 
   private clienters: Set<string> = new Set();
@@ -38,7 +39,7 @@ export class WsService {
     selfUid: string,
   ): Promise<ReceiverMsg | null> {
     try {
-      // 获取联系信息
+      // 获取联系人信息
       const record = await this.contactModel.findOne({
         where: {
           contactId,
@@ -53,31 +54,46 @@ export class WsService {
 
       if (record) {
         // 记录聊天记录
-        this.messageModel.create({
-          senderId: record.uid,
-          receiverId: record.friendUid,
-          chatId: record.chatId,
-          content: msg,
+        const newChatRecord = await this.messageModel.create(
+          {
+            senderId: record.uid,
+            receiverId: record.friendUid,
+            chatId: record.chatId,
+            content: msg,
+          },
+          {
+            raw: true,
+          },
+        );
+
+        // 获取发送人用户基本信息
+        const userBaseInfo = await this.usersModel.findOne({
+          attributes: ['avatar', 'uid', 'nickName', 'gender', 'accountName'],
+          where: {
+            uid: selfUid,
+          },
+          raw: true,
         });
 
         // 判断联系人类型(私聊&群聊)
         if (record.type === 0) {
           return {
-            receivers: [record.friendUid],
+            receivers: [record.friendUid, record.uid],
             responseData: {
               contactId: contactId,
               chatId: record.chatId,
-              msg,
+              ...userBaseInfo,
+              ...newChatRecord.toJSON(),
             },
           };
         } else {
           // 获取指定群聊的全部用户(除自己)
           const groupUsers = await this.contactModel.findAll({
-            where: {
-              chatId: {
-                [Op.or]: [record.uid],
-              },
-            },
+            // where: {
+            //   chatId: {
+            //     [Op.or]: [record.uid],
+            //   },
+            // },
             raw: true,
             logging: true,
           });
@@ -86,7 +102,8 @@ export class WsService {
             responseData: {
               contactId: contactId,
               chatId: record.chatId,
-              msg,
+              ...userBaseInfo,
+              ...newChatRecord.toJSON(),
             },
           };
         }

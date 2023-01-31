@@ -1,4 +1,4 @@
-import { contact, message } from '@/database/models';
+import { contact, message, users } from '@/database/models';
 import { AuthModule } from '@/modules/auth/auth.module';
 import { UserModule } from '@/modules/user/user.module';
 import { Module } from '@nestjs/common';
@@ -15,7 +15,7 @@ import { WsService } from './ws.service';
   imports: [
     UserModule,
     AuthModule,
-    SequelizeModule.forFeature([contact, message]),
+    SequelizeModule.forFeature([contact, message, users]),
   ],
 })
 export class WsModule {}

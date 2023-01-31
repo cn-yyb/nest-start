@@ -65,7 +65,7 @@ export class contact
     allowNull: true,
     type: DataType.INTEGER,
     comment: '类型 0-私聊 | 1-群聊',
-    defaultValue: '0',
+    defaultValue: 0,
   })
   type?: number;
 

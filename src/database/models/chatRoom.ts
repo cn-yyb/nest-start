@@ -61,7 +61,7 @@ export class chatRoom
     allowNull: true,
     type: DataType.TINYINT,
     comment: '房间状态：0 正常 | 1-禁言 | 2-封禁 ',
-    defaultValue: '0',
+    defaultValue: 0,
   })
   status?: number;
 

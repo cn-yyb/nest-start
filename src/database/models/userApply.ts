@@ -41,7 +41,7 @@ export class userApply
     allowNull: true,
     type: DataType.INTEGER,
     comment: '0-未读 | 1-同意 | 2-不同意',
-    defaultValue: '0',
+    defaultValue: 0,
   })
   status?: number;
 
