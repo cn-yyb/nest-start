@@ -64,7 +64,7 @@ const devConfig: SequelizeModuleOptions = {
     freezeTableName: true, // 禁止修改表名
     charset: 'utf8mb4',
   },
-  retryAttempts: 10,
+  retryAttempts: 1,
   retryDelay: 3000,
   // 根据模型同步数据库表（慎用）
   sync: {

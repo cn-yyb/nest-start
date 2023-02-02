@@ -6,7 +6,10 @@ import {
   Index,
   Sequelize,
   ForeignKey,
+  BelongsTo,
 } from 'sequelize-typescript';
+import { chatRoom } from './chatRoom';
+import { users } from './users';
 
 export interface messageAttributes {
   msgId?: number;
@@ -36,13 +39,9 @@ export class message
   @Index({ name: 'PRIMARY', using: 'BTREE', order: 'ASC', unique: true })
   msgId?: number;
 
-  @Column({
-    field: 'sender_id',
-    primaryKey: true,
-    type: DataType.CHAR(36),
-    comment: '发送者uid',
-  })
-  @Index({ name: 'PRIMARY', using: 'BTREE', order: 'ASC', unique: true })
+  @ForeignKey(() => users)
+  @Column({ field: 'senderId', type: DataType.CHAR(36), comment: '发送者uid' })
+  @Index({ name: 'msg_owner_uid', using: 'BTREE', order: 'ASC', unique: false })
   senderId!: string;
 
   @Column({
@@ -53,10 +52,11 @@ export class message
   })
   receiverId?: string;
 
+  @ForeignKey(() => chatRoom)
   @Column({
     field: 'chat_id',
     allowNull: true,
-    type: DataType.INTEGER,
+    type: DataType.SMALLINT,
     comment: '房间号',
   })
   chatId?: number;
@@ -90,4 +90,10 @@ export class message
 
   @Column({ field: 'deleted_at', allowNull: true, type: DataType.DATE })
   deletedAt?: Date;
+
+  @BelongsTo(() => chatRoom)
+  chatRoom?: chatRoom;
+
+  @BelongsTo(() => users)
+  user?: users;
 }

@@ -7,7 +7,13 @@ import {
   Index,
   Sequelize,
   ForeignKey,
+  HasMany,
 } from 'sequelize-typescript';
+import { contact } from './contact';
+import { contactGroup } from './contactGroup';
+import { message } from './message';
+import { userApply } from './userApply';
+import { userBlacklist } from './userBlacklist';
 
 export interface usersAttributes {
   userId?: number;
@@ -55,11 +61,14 @@ export class users
     comment: '用户uuid',
     defaultValue: UUIDV4,
   })
+  @Index({ name: 'contact_uid', using: 'BTREE', order: 'ASC', unique: false })
   @Index({ name: 'PRIMARY', using: 'BTREE', order: 'ASC', unique: true })
+  @Index({ name: 'uid', using: 'BTREE', order: 'ASC', unique: false })
   uid!: string;
 
   @Column({
     field: 'account_name',
+    allowNull: true,
     type: DataType.STRING(24),
     comment: '用户账号',
   })
@@ -96,7 +105,6 @@ export class users
   email?: string;
 
   @Column({ allowNull: true, type: DataType.STRING(15), comment: '手机号码' })
-  @Index({ name: 'idx_m', using: 'BTREE', order: 'ASC', unique: false })
   mobile?: string;
 
   @Column({
@@ -153,4 +161,19 @@ export class users
 
   @Column({ field: 'deleted_at', allowNull: true, type: DataType.DATE })
   deletedAt?: Date;
+
+  @HasMany(() => contact, { sourceKey: 'uid' })
+  contacts?: contact[];
+
+  @HasMany(() => contactGroup, { sourceKey: 'uid' })
+  contactGroups?: contactGroup[];
+
+  @HasMany(() => message, { sourceKey: 'uid' })
+  messages?: message[];
+
+  @HasMany(() => userApply, { sourceKey: 'uid' })
+  userApplies?: userApply[];
+
+  @HasMany(() => userBlacklist, { sourceKey: 'uid' })
+  userBlacklists?: userBlacklist[];
 }

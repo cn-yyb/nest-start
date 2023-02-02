@@ -6,12 +6,14 @@ import {
   Index,
   Sequelize,
   ForeignKey,
+  BelongsTo,
 } from 'sequelize-typescript';
+import { users } from './users';
 
 export interface userBlacklistAttributes {
   id?: number;
-  uid?: string;
-  targetUid?: string;
+  uid: string;
+  targetUid: string;
   createdAt?: Date;
   updatedAt?: Date;
   deletedAt?: Date;
@@ -26,11 +28,13 @@ export class userBlacklist
   @Index({ name: 'PRIMARY', using: 'BTREE', order: 'ASC', unique: true })
   id?: number;
 
-  @Column({ allowNull: true, type: DataType.CHAR(36) })
-  uid?: string;
+  @ForeignKey(() => users)
+  @Column({ type: DataType.CHAR(36) })
+  @Index({ name: 'blacklist_uid', using: 'BTREE', order: 'ASC', unique: false })
+  uid!: string;
 
-  @Column({ field: 'target_uid', allowNull: true, type: DataType.CHAR(36) })
-  targetUid?: string;
+  @Column({ field: 'target_uid', type: DataType.CHAR(36) })
+  targetUid!: string;
 
   @Column({ field: 'created_at', allowNull: true, type: DataType.DATE })
   createdAt?: Date;
@@ -40,4 +44,7 @@ export class userBlacklist
 
   @Column({ field: 'deleted_at', allowNull: true, type: DataType.DATE })
   deletedAt?: Date;
+
+  @BelongsTo(() => users)
+  user?: users;
 }

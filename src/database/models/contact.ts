@@ -6,14 +6,18 @@ import {
   Index,
   Sequelize,
   ForeignKey,
+  BelongsTo,
 } from 'sequelize-typescript';
+import { users } from './users';
+import { contactGroup } from './contactGroup';
+import { chatRoom } from './chatRoom';
 
 export interface contactAttributes {
   contactId?: number;
   uid: string;
-  groupId?: number;
-  chatId?: number;
   friendUid?: string;
+  groupId?: number;
+  chatId: number;
   contactName?: string;
   remark?: string;
   type?: number;
@@ -37,18 +41,21 @@ export class contact
   @Index({ name: 'PRIMARY', using: 'BTREE', order: 'ASC', unique: true })
   contactId?: number;
 
-  @Column({ primaryKey: true, type: DataType.STRING(36) })
-  @Index({ name: 'PRIMARY', using: 'BTREE', order: 'ASC', unique: true })
+  @ForeignKey(() => users)
+  @Column({ type: DataType.CHAR(36) })
+  @Index({ name: 'contact_uid', using: 'BTREE', order: 'ASC', unique: false })
   uid!: string;
-
-  @Column({ field: 'group_id', allowNull: true, type: DataType.INTEGER })
-  groupId?: number;
-
-  @Column({ field: 'chat_id', allowNull: true, type: DataType.SMALLINT })
-  chatId?: number;
 
   @Column({ field: 'friend_uid', allowNull: true, type: DataType.CHAR(36) })
   friendUid?: string;
+
+  @ForeignKey(() => contactGroup)
+  @Column({ field: 'group_id', allowNull: true, type: DataType.SMALLINT })
+  groupId?: number;
+
+  @ForeignKey(() => chatRoom)
+  @Column({ field: 'chat_id', type: DataType.SMALLINT })
+  chatId!: number;
 
   @Column({
     field: 'contact_name',
@@ -77,4 +84,13 @@ export class contact
 
   @Column({ field: 'deleted_at', allowNull: true, type: DataType.DATE })
   deletedAt?: Date;
+
+  @BelongsTo(() => users)
+  user?: users;
+
+  @BelongsTo(() => contactGroup)
+  contactGroup?: contactGroup;
+
+  @BelongsTo(() => chatRoom)
+  chatRoom?: chatRoom;
 }

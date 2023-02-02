@@ -6,7 +6,10 @@ import {
   Index,
   Sequelize,
   ForeignKey,
+  HasMany,
 } from 'sequelize-typescript';
+import { contact } from './contact';
+import { message } from './message';
 
 export interface chatRoomAttributes {
   chatId?: number;
@@ -52,7 +55,7 @@ export class chatRoom
 
   @Column({
     allowNull: true,
-    type: DataType.STRING(45),
+    type: DataType.CHAR(36),
     comment: '群主ID（私聊默认未空）',
   })
   owner?: string;
@@ -73,4 +76,10 @@ export class chatRoom
 
   @Column({ field: 'deleted_at', allowNull: true, type: DataType.DATE })
   deletedAt?: Date;
+
+  @HasMany(() => contact, { sourceKey: 'chatId' })
+  contacts?: contact[];
+
+  @HasMany(() => message, { sourceKey: 'chatId' })
+  messages?: message[];
 }

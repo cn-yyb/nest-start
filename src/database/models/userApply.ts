@@ -6,12 +6,14 @@ import {
   Index,
   Sequelize,
   ForeignKey,
+  BelongsTo,
 } from 'sequelize-typescript';
+import { users } from './users';
 
 export interface userApplyAttributes {
   id?: number;
-  applyUid?: string;
-  friendUid?: string;
+  applyUid: string;
+  friendUid: string;
   verifyMsg?: string;
   status?: number;
   createdAt?: Date;
@@ -28,11 +30,12 @@ export class userApply
   @Index({ name: 'PRIMARY', using: 'BTREE', order: 'ASC', unique: true })
   id?: number;
 
-  @Column({ field: 'apply_uid', allowNull: true, type: DataType.CHAR(36) })
-  applyUid?: string;
+  @ForeignKey(() => users)
+  @Column({ field: 'apply_uid', type: DataType.CHAR(36) })
+  applyUid!: string;
 
-  @Column({ field: 'friend_uid', allowNull: true, type: DataType.CHAR(36) })
-  friendUid?: string;
+  @Column({ field: 'friend_uid', type: DataType.CHAR(36) })
+  friendUid!: string;
 
   @Column({ field: 'verify_msg', allowNull: true, type: DataType.STRING(200) })
   verifyMsg?: string;
@@ -53,4 +56,7 @@ export class userApply
 
   @Column({ field: 'deleted_at', allowNull: true, type: DataType.DATE })
   deletedAt?: Date;
+
+  @BelongsTo(() => users)
+  user?: users;
 }
