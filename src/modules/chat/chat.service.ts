@@ -129,6 +129,17 @@ export class ChatService {
             raw: true,
           });
 
+        // 获取用户昵称作为联系人名称
+        const [applyUser, firendUser] = await this.userModel.findAll({
+          attributes: ['nickName'],
+          where: {
+            uid: {
+              [Op.or]: [record.applyUid, record.friendUid],
+            },
+          },
+          raw: true,
+        });
+
         // 更新联系人记录
         const [contactRecord, created] = await this.contactModel.findOrCreate({
           where: {
@@ -140,6 +151,7 @@ export class ChatService {
             friendUid: record.friendUid,
             type: 0,
             groupId: chatGroupRecord.groupId,
+            contactName: firendUser.nickName,
           },
           paranoid: false,
         });
@@ -155,6 +167,7 @@ export class ChatService {
               friendUid: record.applyUid,
               type: 0,
               groupId: firendchatGroupRecord.groupId,
+              contactName: applyUser.nickName,
             },
             paranoid: false,
           });
@@ -218,7 +231,7 @@ export class ChatService {
         where: {
           chatId: data.chatId,
         },
-        order: [['createdAt', 'ASC']],
+        order: [['createdAt', 'DESC']],
         limit: pageSize,
         offset: (current - 1) * pageSize,
         raw: true,
@@ -233,10 +246,12 @@ export class ChatService {
           pageSize,
           pages: Math.ceil(count / pageSize),
           total: count,
-          data: rows.map((v: any) => {
-            v.isSelf = v.senderId === selfUid;
-            return v;
-          }),
+          data: rows
+            .map((v: any) => {
+              v.isSelf = v.senderId === selfUid;
+              return v;
+            })
+            .reverse(),
           time: +new Date(),
         },
       };

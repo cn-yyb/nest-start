@@ -66,6 +66,8 @@ export class WsService {
           },
         );
 
+        // 多表查询获取相关人的基本信息
+
         // 获取发送人用户基本信息
         const userBaseInfo = await this.usersModel.findOne({
           attributes: ['avatar', 'uid', 'nickName', 'gender', 'accountName'],
