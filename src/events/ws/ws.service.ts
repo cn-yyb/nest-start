@@ -1,7 +1,6 @@
 import { contact, message, users } from '@/database/models';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
-import { Op } from 'sequelize';
 import { ChatMsgType, ReceiverMsg } from './interfaces/ws.interface';
 
 @Injectable()
@@ -84,8 +83,8 @@ export class WsService {
             responseData: {
               contactId: contactId,
               chatId: record.chatId,
-              ...userBaseInfo,
               ...newChatRecord.toJSON(),
+              user: userBaseInfo,
             },
           };
         } else {
@@ -96,6 +95,7 @@ export class WsService {
             //     [Op.or]: [record.uid],
             //   },
             // },
+            attributes: ['uid'],
             raw: true,
             logging: true,
           });
@@ -104,8 +104,8 @@ export class WsService {
             responseData: {
               contactId: contactId,
               chatId: record.chatId,
-              ...userBaseInfo,
               ...newChatRecord.toJSON(),
+              user: userBaseInfo,
             },
           };
         }

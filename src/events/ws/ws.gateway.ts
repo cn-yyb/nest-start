@@ -25,6 +25,7 @@ import { CLIENT_EVENTS } from './events/client.events';
 import { SERVER_EVENTS } from './events/server.events';
 import { WsService } from './ws.service';
 import { AuthService } from '@/modules/auth/auth.service';
+import { formatJsonNull } from '@/utils/formatJson.utils';
 
 @WebSocketGateway(8001, {
   cors: {
@@ -170,7 +171,7 @@ export class WsGateway
 
     this.sendClientsMsg(receivers, {
       event: CLIENT_EVENTS.RECEIVE_CHAT_MSG,
-      data: msgData,
+      data: formatJsonNull(msgData),
     });
   }
 

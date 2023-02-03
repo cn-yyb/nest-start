@@ -18,7 +18,7 @@ export interface contactAttributes {
   friendUid?: string;
   groupId?: number;
   chatId: number;
-  contactName?: string;
+  // contactName?: string;
   remark?: string;
   type?: number;
   createdAt?: Date;
@@ -41,11 +41,12 @@ export class contact
   @Index({ name: 'PRIMARY', using: 'BTREE', order: 'ASC', unique: true })
   contactId?: number;
 
-  @ForeignKey(() => users)
+  // @ForeignKey(() => users)
   @Column({ type: DataType.CHAR(36) })
   @Index({ name: 'contact_uid', using: 'BTREE', order: 'ASC', unique: false })
   uid!: string;
 
+  @ForeignKey(() => users)
   @Column({ field: 'friend_uid', allowNull: true, type: DataType.CHAR(36) })
   friendUid?: string;
 
@@ -57,13 +58,13 @@ export class contact
   @Column({ field: 'chat_id', type: DataType.SMALLINT })
   chatId!: number;
 
-  @Column({
-    field: 'contact_name',
-    allowNull: true,
-    type: DataType.STRING(45),
-    comment: '联系人昵称',
-  })
-  contactName?: string;
+  // @Column({
+  //   field: 'contact_name',
+  //   allowNull: true,
+  //   type: DataType.STRING(45),
+  //   comment: '联系人昵称',
+  // })
+  // contactName?: string;
 
   @Column({ allowNull: true, type: DataType.STRING(45), comment: '备注' })
   remark?: string;
@@ -85,7 +86,7 @@ export class contact
   @Column({ field: 'deleted_at', allowNull: true, type: DataType.DATE })
   deletedAt?: Date;
 
-  @BelongsTo(() => users, { targetKey: 'uid', foreignKey: 'uid' })
+  @BelongsTo(() => users, { targetKey: 'uid', foreignKey: 'friendUid' })
   user?: users;
 
   @BelongsTo(() => contactGroup, {

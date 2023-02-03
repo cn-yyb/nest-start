@@ -151,7 +151,7 @@ export class ChatService {
             friendUid: record.friendUid,
             type: 0,
             groupId: chatGroupRecord.groupId,
-            contactName: firendUser.nickName,
+            // contactName: firendUser.nickName,
           },
           paranoid: false,
         });
@@ -167,7 +167,7 @@ export class ChatService {
               friendUid: record.applyUid,
               type: 0,
               groupId: firendchatGroupRecord.groupId,
-              contactName: applyUser.nickName,
+              // contactName: applyUser.nickName,
             },
             paranoid: false,
           });
@@ -231,11 +231,15 @@ export class ChatService {
         where: {
           chatId: data.chatId,
         },
+        include: [
+          {
+            model: users,
+            attributes: ['accountName', 'nickName', 'gender', 'avatar', 'uid'],
+          },
+        ],
         order: [['createdAt', 'DESC']],
         limit: pageSize,
         offset: (current - 1) * pageSize,
-        raw: true,
-        logging: true,
       });
 
       return {
@@ -246,10 +250,12 @@ export class ChatService {
           pageSize,
           pages: Math.ceil(count / pageSize),
           total: count,
+          // JSON.parse(JSON.stringfy(rows)) // 简便， 但不推荐
           data: rows
-            .map((v: any) => {
-              v.isSelf = v.senderId === selfUid;
-              return v;
+            .map((v) => {
+              const value = v.get({ plain: true }) as any;
+              value.isSelf = v.senderId === selfUid;
+              return value;
             })
             .reverse(),
           time: +new Date(),
@@ -280,7 +286,23 @@ export class ChatService {
         attributes: {
           exclude: ['uid', 'deletedAt'],
         },
-        raw: true,
+        include: [
+          {
+            model: users,
+            attributes: {
+              exclude: [
+                'password',
+                'passwordSalt',
+                'realName',
+                'mobile',
+                'email',
+                'role',
+                'deletedAt',
+              ],
+            },
+          },
+        ],
+        // raw: true,
         logging: true,
       });
 
