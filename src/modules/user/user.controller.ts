@@ -8,12 +8,7 @@ import {
   UseInterceptors,
   UsePipes,
 } from '@nestjs/common';
-import {
-  LoginDto,
-  UserRegisterDto,
-  UploadFileDto,
-  GetUserInfoDto,
-} from './dto/user.dto';
+import { LoginDto, UserRegisterDto, UploadFileDto } from './dto/user.dto';
 import { UserService } from './user.service';
 import { AuthService } from '../auth/auth.service';
 import { AuthGuard } from '@nestjs/passport';

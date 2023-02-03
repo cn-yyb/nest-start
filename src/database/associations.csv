@@ -3,6 +3,6 @@
 1:n, chat_id, chat_id, chat_room, contact
 1:n, uid, uid, users, contact_group
 1:n, chat_id, chat_id, chat_room, message
-1:n, sender_id, uid, users, message
-1:n, apply_uid, uid, users, user_apply
+1:n, uid, sender_id, users, message
+1:n, uid, apply_uid, users, user_apply
 1:n, uid, uid, users, user_blacklist

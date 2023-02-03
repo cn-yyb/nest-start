@@ -91,9 +91,15 @@ export class message
   @Column({ field: 'deleted_at', allowNull: true, type: DataType.DATE })
   deletedAt?: Date;
 
-  @BelongsTo(() => chatRoom)
+  @BelongsTo(() => chatRoom, {
+    foreignKey: 'chatId',
+    targetKey: 'chatId',
+  })
   chatRoom?: chatRoom;
 
-  @BelongsTo(() => users)
+  @BelongsTo(() => users, {
+    foreignKey: 'senderId',
+    targetKey: 'uid',
+  })
   user?: users;
 }

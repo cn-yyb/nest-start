@@ -85,12 +85,15 @@ export class contact
   @Column({ field: 'deleted_at', allowNull: true, type: DataType.DATE })
   deletedAt?: Date;
 
-  @BelongsTo(() => users)
+  @BelongsTo(() => users, { targetKey: 'uid', foreignKey: 'uid' })
   user?: users;
 
-  @BelongsTo(() => contactGroup)
+  @BelongsTo(() => contactGroup, {
+    targetKey: 'groupId',
+    foreignKey: 'groupId',
+  })
   contactGroup?: contactGroup;
 
-  @BelongsTo(() => chatRoom)
+  @BelongsTo(() => chatRoom, { targetKey: 'chatId', foreignKey: 'chatId' })
   chatRoom?: chatRoom;
 }

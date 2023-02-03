@@ -6,7 +6,6 @@ import {
   DataType,
   Index,
   Sequelize,
-  ForeignKey,
   HasMany,
 } from 'sequelize-typescript';
 import { contact } from './contact';

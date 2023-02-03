@@ -57,6 +57,6 @@ export class userApply
   @Column({ field: 'deleted_at', allowNull: true, type: DataType.DATE })
   deletedAt?: Date;
 
-  @BelongsTo(() => users)
+  @BelongsTo(() => users, { foreignKey: 'applyUid', targetKey: 'uid' })
   user?: users;
 }

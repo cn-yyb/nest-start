@@ -85,6 +85,6 @@ export class contactGroup
   @HasMany(() => contact, { sourceKey: 'groupId' })
   contacts?: contact[];
 
-  @BelongsTo(() => users)
+  @BelongsTo(() => users, { foreignKey: 'uid', targetKey: 'uid' })
   user?: users;
 }

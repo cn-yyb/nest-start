@@ -24,7 +24,6 @@ import { SequelizeModule } from '@nestjs/sequelize';
 import { ConfigModule } from 'nestjs-config';
 
 import dbConfig from './config/dbConnect';
-import { chatRoom, users } from './database/models';
 
 @Module({
   imports: [
@@ -41,9 +40,8 @@ import { chatRoom, users } from './database/models';
     ConfigModule.load(path.resolve(__dirname, 'config', '**/!(*.d).{ts,js}')),
     // 数据库配置
     SequelizeModule.forRoot(dbConfig),
-    SequelizeModule.forFeature([users, chatRoom]),
   ],
   controllers: [AppController, UserController],
-  providers: [AppService],
+  providers: [AppService, ConfigModule],
 })
 export class AppModule {}

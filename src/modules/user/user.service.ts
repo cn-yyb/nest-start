@@ -1,10 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { encryptPassword, makeSalt } from '@/utils/cryptogram.utils';
-import { GetUserInfoDto, UserRegisterDto } from './dto/user.dto';
+import { UserRegisterDto } from './dto/user.dto';
 import { users, chatRoom, contactGroup } from '@/database/models';
 import { InjectModel } from '@nestjs/sequelize';
 import { EmailService } from '@/modules/email/email.service';
-import { formatJsonNull } from '@/utils/formatJson.utils';
 import { Op } from 'sequelize';
 // import { col, fn, Op, Sequelize } from 'sequelize';
 
@@ -158,7 +157,7 @@ export class UserService {
 
       const userRecord = await this.userModel.create(
         {
-          accountName: accountName,
+          accountName,
           password: hashPwd,
           passwordSalt: salt,
           email,
@@ -207,24 +206,5 @@ export class UserService {
     });
 
     return !!user;
-  }
-
-  // 测试
-  async test() {
-    const res = await this.chatRoomModel.create({
-      chatName: 'private-01',
-    });
-
-    await this.chatRoomModel.destroy({
-      where: {
-        chatName: 'private-01',
-      },
-    });
-
-    return {
-      code: 0,
-      msg: 'success',
-      data: res,
-    };
   }
 }

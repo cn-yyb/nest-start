@@ -1,15 +1,6 @@
 import { Controller, Get } from '@nestjs/common';
-import { InjectModel } from '@nestjs/sequelize';
+import { ConfigService } from 'nestjs-config';
 import { AppService } from './app.service';
-import {
-  chatRoom,
-  contact,
-  contactGroup,
-  message,
-  userApply,
-  userBlacklist,
-  users,
-} from './database/models';
 import { WsGateway } from './events/ws/ws.gateway';
 
 @Controller()
@@ -17,8 +8,7 @@ export class AppController {
   constructor(
     private readonly appService: AppService,
     private readonly wsGateway: WsGateway,
-    @InjectModel(users) private userModel: typeof users,
-    @InjectModel(chatRoom) private chatRoomModel: typeof chatRoom,
+    private readonly configService: ConfigService,
   ) {}
 
   @Get('test')
@@ -33,51 +23,15 @@ export class AppController {
       },
       true,
     );
-    const data = await this.userModel.findAll({
-      include: [
-        {
-          model: contact,
-        },
-        {
-          model: contactGroup,
-          include: [
-            {
-              model: contact,
-            },
-          ],
-        },
-        {
-          model: userBlacklist,
-        },
-        {
-          model: message,
-        },
-        {
-          model: userApply,
-        },
-      ],
-      logging: true,
-    });
 
-    const chatRecored = await this.chatRoomModel.findAll({
-      include: [
-        {
-          model: contact,
-        },
-        {
-          model: message,
-        },
-      ],
-    });
+    console.log(this.configService.get('statusMonitor'));
 
-    console.log(data);
     return {
       code: 0,
       data: {
         clientCount: this.wsGateway.clientCount,
         text: 'hello world!',
-        data,
-        chatRecored,
+        config: this.configService.get('statusMonitor'),
       },
       msg: 'success',
     };

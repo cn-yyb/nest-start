@@ -45,6 +45,6 @@ export class userBlacklist
   @Column({ field: 'deleted_at', allowNull: true, type: DataType.DATE })
   deletedAt?: Date;
 
-  @BelongsTo(() => users)
+  @BelongsTo(() => users, { foreignKey: 'uid', targetKey: 'uid' })
   user?: users;
 }
