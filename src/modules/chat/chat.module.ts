@@ -13,6 +13,8 @@ import {
 } from '@/database/models';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthModule } from '../auth/auth.module';
+import { WsGateway } from '@/events/ws/ws.gateway';
+import { WsModule } from '@/events/ws/ws.module';
 
 @Module({
   imports: [
@@ -27,6 +29,7 @@ import { AuthModule } from '../auth/auth.module';
     ]),
     JwtModule,
     AuthModule,
+    WsModule,
   ],
   providers: [ChatService],
   controllers: [ChatController],

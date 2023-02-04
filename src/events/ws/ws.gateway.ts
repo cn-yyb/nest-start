@@ -52,6 +52,10 @@ export class WsGateway
     return this.clients.size;
   }
 
+  get onlineClienterUids(): string[] {
+    return [...this.clients].map((v) => v.uid);
+  }
+
   afterInit(server: Server) {
     Logger.log('websocket server init successfully!', 'websocket');
     // 此处可以监听 ws 各种事件(等同于 handleConnection)
@@ -235,9 +239,18 @@ export class WsGateway
   /**
    * 获取指定uid的连接对象
    * @param uid uid
-   * @returns  websockt 连接对象
+   * @returns {CustomWebSocket}  websockt 连接对象
    */
-  returnClientByUid(uid: string) {
+  returnClientByUid(uid: string): CustomWebSocket {
     return [...this.clients].find((item) => item.uid === uid);
+  }
+
+  /**
+   * 判断指定uid是否在线
+   * @param uid uid
+   * @returns {CustomWebSocket}  websockt 连接对象
+   */
+  hasClientOnline(uid: string): boolean {
+    return !!this.returnClientByUid(uid);
   }
 }

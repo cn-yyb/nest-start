@@ -7,6 +7,7 @@ import {
   userBlacklist,
   users,
 } from '@/database/models';
+import { WsGateway } from '@/events/ws/ws.gateway';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { Op } from 'sequelize';
@@ -28,6 +29,7 @@ export class ChatService {
     @InjectModel(userBlacklist) private userBacklistModel: typeof userBlacklist,
     @InjectModel(message) private messageModel: typeof message,
     private readonly authService: AuthService,
+    private readonly wsGateway: WsGateway,
   ) {}
 
   async applyNewFriend(applicationForm: ApplyFriendFormDto, token: string) {
@@ -309,7 +311,10 @@ export class ChatService {
       return {
         code: 0,
         msg: 'success',
-        data: record,
+        data: JSON.parse(JSON.stringify(record)).map((item) => {
+          item.isOnline = this.wsGateway.hasClientOnline(item.user.uid);
+          return item;
+        }),
       };
     } catch (error) {
       console.log('rebackChatRecord Error:', error);
