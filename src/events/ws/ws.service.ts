@@ -47,7 +47,7 @@ export class WsService {
       });
 
       // 避免使用他人账号给自己发消息
-      if (!record || record.uid !== selfUid) {
+      if (!record || record.uid !== selfUid || record.uid !== selfUid) {
         return null;
       }
 
@@ -64,6 +64,8 @@ export class WsService {
             raw: true,
           },
         );
+
+        // 判断消息接收者是否在线,并记录未读信息至数据库(在用户登录时,将未读信息返回给用户)
 
         // 多表查询获取相关人的基本信息
 

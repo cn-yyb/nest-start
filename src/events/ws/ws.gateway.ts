@@ -251,6 +251,6 @@ export class WsGateway
    * @returns {CustomWebSocket}  websockt 连接对象
    */
   hasClientOnline(uid: string): boolean {
-    return !!this.returnClientByUid(uid);
+    return this.onlineClienterUids.includes(uid);
   }
 }

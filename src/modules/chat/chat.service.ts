@@ -131,17 +131,6 @@ export class ChatService {
             raw: true,
           });
 
-        // 获取用户昵称作为联系人名称
-        const [applyUser, firendUser] = await this.userModel.findAll({
-          attributes: ['nickName'],
-          where: {
-            uid: {
-              [Op.or]: [record.applyUid, record.friendUid],
-            },
-          },
-          raw: true,
-        });
-
         // 更新联系人记录
         const [contactRecord, created] = await this.contactModel.findOrCreate({
           where: {
@@ -153,7 +142,6 @@ export class ChatService {
             friendUid: record.friendUid,
             type: 0,
             groupId: chatGroupRecord.groupId,
-            // contactName: firendUser.nickName,
           },
           paranoid: false,
         });
@@ -169,7 +157,6 @@ export class ChatService {
               friendUid: record.applyUid,
               type: 0,
               groupId: firendchatGroupRecord.groupId,
-              // contactName: applyUser.nickName,
             },
             paranoid: false,
           });
@@ -276,14 +263,13 @@ export class ChatService {
     console.log('rebackChatRecord');
   }
 
-  async getContactList(token: string) {
+  async getContactList(uid: string) {
     console.log('rebackChatRecord');
     try {
-      const userInfo = await this.authService.formatTokenInfo(token);
-
       const record = await this.contactModel.findAll({
         where: {
-          uid: userInfo.uid,
+          uid,
+          type: 0,
         },
         attributes: {
           exclude: ['uid', 'deletedAt'],
@@ -322,7 +308,60 @@ export class ChatService {
     }
   }
 
-  getContectGroups() {
+  async getContectGroups(uid: string) {
     console.log('getContectGroups');
+    try {
+      const record = await this.contactGroupModel.findAll({
+        attributes: {
+          exclude: ['deletedAt'],
+        },
+        order: [['groupOrder', 'ASC']],
+        where: { uid, type: 0 },
+        include: [
+          {
+            model: contact,
+            attributes: {
+              exclude: ['uid', 'deletedAt'],
+            },
+            include: [
+              {
+                model: users,
+                attributes: {
+                  exclude: [
+                    'password',
+                    'passwordSalt',
+                    'realName',
+                    'mobile',
+                    'email',
+                    'role',
+                    'deletedAt',
+                  ],
+                },
+              },
+            ],
+          },
+        ],
+      });
+
+      return {
+        code: 0,
+        msg: 'success',
+        data: JSON.parse(JSON.stringify(record)).map((item) => {
+          let onlineTotal = 0;
+          item.contacts.forEach((v) => {
+            const hasOnline = this.wsGateway.hasClientOnline(v.user.uid);
+
+            hasOnline && onlineTotal++;
+
+            v.isOnline = hasOnline;
+          });
+          item.onlineTotal = onlineTotal;
+          return item;
+        }),
+      };
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
   }
 }

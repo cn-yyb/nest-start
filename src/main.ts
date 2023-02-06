@@ -8,7 +8,7 @@ import { logger } from './middleware/logger.middleware';
 // swagger
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { PORT, ROUTE_PREFIX } from './constants/server.contants';
-import { Logger } from '@nestjs/common';
+import { Logger, VersioningType } from '@nestjs/common';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { join, resolve } from 'path';
 import { WsAdapter } from './events/ws/ws.adapter';

@@ -63,8 +63,8 @@ export class ChatController {
   @ApiOperation({ summary: '获取联系人列表' })
   @UseGuards(AuthGuard('jwt'))
   @Get('contacts')
-  async getContacts(@Token() token: string) {
-    return await this.chatService.getContactList(token);
+  async getContacts(@User() user: UserTokenSign) {
+    return await this.chatService.getContactList(user.uid);
   }
 
   @ApiOperation({ summary: '获取指定联系人的聊天记录' })
@@ -77,5 +77,12 @@ export class ChatController {
     @User() user: UserTokenSign,
   ) {
     return await this.chatService.getChatRoomChatRecord(data, user.uid);
+  }
+
+  @ApiOperation({ summary: '获取联系人分组列表' })
+  @UseGuards(AuthGuard('jwt'))
+  @Get('contact-groups')
+  async getContactGroups(@User() user: UserTokenSign) {
+    return await this.chatService.getContectGroups(user.uid);
   }
 }
