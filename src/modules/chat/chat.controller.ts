@@ -85,4 +85,11 @@ export class ChatController {
   async getContactGroups(@User() user: UserTokenSign) {
     return await this.chatService.getContectGroups(user.uid);
   }
+
+  @ApiOperation({ summary: '获取联系人分组列表' })
+  @UseGuards(AuthGuard('jwt'))
+  @Get('unread-record')
+  async getUnreadChatRecords(@User() user: UserTokenSign) {
+    return await this.chatService.getUnreadChatRecords(user.uid);
+  }
 }

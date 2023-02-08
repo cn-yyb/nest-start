@@ -32,6 +32,12 @@ export class ChatService {
     private readonly wsGateway: WsGateway,
   ) {}
 
+  /**
+   * 发送用户好友申请
+   * @param applicationForm
+   * @param token
+   * @returns
+   */
   async applyNewFriend(applicationForm: ApplyFriendFormDto, token: string) {
     console.log('applyNewFriend');
     const { friendUid, verifyMsg } = applicationForm;
@@ -106,6 +112,11 @@ export class ChatService {
     }
   }
 
+  /**
+   *  同意好友申请
+   * @param param0
+   * @returns
+   */
   async agreeFirendAppliaction({ id }: AgreeFriendApplicationDto) {
     try {
       // 判断当前申请是否存在
@@ -206,6 +217,12 @@ export class ChatService {
     console.log('removeFriend');
   }
 
+  /**
+   * 获取指定聊天室的聊天记录
+   * @param data
+   * @param selfUid
+   * @returns
+   */
   async getChatRoomChatRecord(data: RequestChatRecordDto, selfUid: string) {
     console.log('getChatRoomChatRecord');
 
@@ -231,6 +248,17 @@ export class ChatService {
         offset: (current - 1) * pageSize,
       });
 
+      // * 注意当清除前用户未读的数据(一当获取历史记录，即表示需要清除掉当前聊天室自己的未读消息)
+      await this.messageModel.update(
+        { status: 1 },
+        {
+          where: {
+            receiverId: selfUid,
+            chatId: data.chatId,
+          },
+        },
+      );
+
       return {
         code: 0,
         msg: 'success',
@@ -255,14 +283,57 @@ export class ChatService {
     }
   }
 
-  getChatRoomInfo() {
-    console.log('getChatRoomInfo');
+  /**
+   * 获取指定聊天室信息
+   * @param chatId
+   */
+  async getChatRoomInfo(chatId: number) {
+    try {
+      const record = await this.chatRoomModel.findOne({
+        attributes: {
+          exclude: ['deletedAt'],
+        },
+        where: {
+          chatId,
+        },
+      });
+
+      return {
+        code: 0,
+        msg: 'success',
+        data: record,
+      };
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  }
+
+  createPublicChatRoom() {
+    console.log('createPublicChatRoom');
+  }
+
+  applyJoinToPublicChatRoom() {
+    console.log('applyToPublicChatRoom');
+  }
+
+  agreePublicChatRoomAppliaction() {
+    console.log('agreePublicChatRoomAppliaction');
+  }
+
+  updatePublicChatRoomInfo() {
+    console.log('updatePublicChatRoomInfo');
   }
 
   withdrawChatRecord() {
-    console.log('rebackChatRecord');
+    console.log('withdrawChatRecord');
   }
 
+  /**
+   * 获取联系人列表
+   * @param uid
+   * @returns
+   */
   async getContactList(uid: string) {
     console.log('rebackChatRecord');
     try {
@@ -308,6 +379,27 @@ export class ChatService {
     }
   }
 
+  createNewContactGroup() {
+    console.log('addNewContactGroup');
+  }
+
+  removeContactGroup() {
+    console.log('removeContactGroup');
+  }
+
+  updateContactGroup() {
+    console.log('updateContactGroup');
+  }
+
+  getPublicChatRoomList() {
+    console.log('getPublicChatRoomList');
+  }
+
+  /**
+   * 获取联系人分组列表
+   * @param uid
+   * @returns
+   */
   async getContectGroups(uid: string) {
     console.log('getContectGroups');
     try {
@@ -363,5 +455,70 @@ export class ChatService {
       console.log(error);
       throw error;
     }
+  }
+
+  /**
+   *  获取离线状态下接收到的未读信息
+   * @param uid {String}
+   */
+  async getUnreadChatRecords(uid: string) {
+    try {
+      const contact_uids = await this.contactModel.findAll({
+        where: {
+          uid,
+        },
+      });
+
+      const { count, rows } = await this.userModel.findAndCountAll({
+        attributes: ['accountName', 'nickName', 'gender', 'avatar', 'uid'],
+        where: {
+          uid: contact_uids.map((v) => v.friendUid),
+        },
+        include: [
+          {
+            model: message,
+            where: {
+              receiverId: uid,
+              status: 0,
+            },
+            attributes: {
+              exclude: ['deletedAt'],
+            },
+          },
+        ],
+      });
+
+      return {
+        code: 0,
+        msg: 'success',
+        data: {
+          total: count,
+          record: rows
+            .filter((v) => v.messages.length)
+            .map((item) => {
+              const { messages, accountName, nickName, gender, avatar, uid } =
+                item;
+              const unreadCount = messages.length;
+              const lastMsg = messages[messages.length - 1];
+              return {
+                accountName,
+                nickName,
+                gender,
+                avatar,
+                uid,
+                unreadCount,
+                lastMsg,
+              };
+            }),
+        },
+      };
+    } catch (error) {
+      console.log('error:', error);
+      throw error;
+    }
+  }
+
+  unsubscribeChatRoom() {
+    console.log('updateChatRoomInfo');
   }
 }

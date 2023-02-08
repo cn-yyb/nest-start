@@ -207,4 +207,20 @@ export class UserService {
 
     return !!user;
   }
+
+  updateUserBaseInfo() {
+    console.log('updateUserInfo');
+  }
+
+  updateUserStatus() {
+    console.log('updateUserStatus');
+  }
+
+  updateUserSign() {
+    console.log('updateUserSign');
+  }
+
+  searchUsers() {
+    console.log('searchUsers');
+  }
 }

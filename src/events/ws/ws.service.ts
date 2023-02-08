@@ -52,22 +52,19 @@ export class WsService {
       }
 
       if (record) {
-        // 记录聊天记录
+        // 记录聊天记录, 判断消息接收者是否在线,并记录未读信息至数据库(在用户登录时,将未读信息返回给用户)
         const newChatRecord = await this.messageModel.create(
           {
             senderId: record.uid,
             receiverId: record.friendUid,
             chatId: record.chatId,
             content: msg,
+            status: this.hasOnlineClienter(record.friendUid) ? 1 : 0,
           },
           {
             raw: true,
           },
         );
-
-        // 判断消息接收者是否在线,并记录未读信息至数据库(在用户登录时,将未读信息返回给用户)
-
-        // 多表查询获取相关人的基本信息
 
         // 获取发送人用户基本信息
         const userBaseInfo = await this.usersModel.findOne({
