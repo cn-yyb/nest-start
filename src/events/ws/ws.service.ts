@@ -1,6 +1,7 @@
 import { contact, message, users } from '@/database/models';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
+import { Op } from 'sequelize';
 import { ChatMsgType, ReceiverMsg } from './interfaces/ws.interface';
 
 @Injectable()
@@ -43,7 +44,6 @@ export class WsService {
         where: {
           contactId,
         },
-        logging: true,
       });
 
       // 避免使用他人账号给自己发消息
@@ -80,9 +80,9 @@ export class WsService {
           return {
             receivers: [record.friendUid, record.uid],
             responseData: {
-              contactId: contactId,
               chatId: record.chatId,
               ...newChatRecord.toJSON(),
+              type: record.type,
               user: userBaseInfo,
             },
           };
@@ -98,10 +98,11 @@ export class WsService {
             raw: true,
             logging: true,
           });
+
           return {
             receivers: groupUsers.map((v) => v.uid),
             responseData: {
-              contactId: contactId,
+              type: record.type,
               chatId: record.chatId,
               ...newChatRecord.toJSON(),
               user: userBaseInfo,

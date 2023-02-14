@@ -458,21 +458,25 @@ export class ChatService {
   }
 
   /**
-   *  获取离线状态下接收到的未读信息
+   *  获取离线状态下接收到的未读信息(私聊)
    * @param uid {String}
    */
   async getUnreadChatRecords(uid: string) {
     try {
-      const contact_uids = await this.contactModel.findAll({
+      const privateContacts = await this.contactModel.findAll({
+        attributes: {
+          exclude: ['deletedAt'],
+        },
         where: {
           uid,
+          type: 0,
         },
       });
 
       const { count, rows } = await this.userModel.findAndCountAll({
         attributes: ['accountName', 'nickName', 'gender', 'avatar', 'uid'],
         where: {
-          uid: contact_uids.map((v) => v.friendUid),
+          uid: privateContacts.map((v) => v.friendUid),
         },
         include: [
           {
@@ -488,6 +492,8 @@ export class ChatService {
         ],
       });
 
+      const _privateContacts = JSON.parse(JSON.stringify(privateContacts));
+
       return {
         code: 0,
         msg: 'success',
@@ -500,13 +506,19 @@ export class ChatService {
                 item;
               const unreadCount = messages.length;
               const lastMsg = messages[messages.length - 1];
+              const contact = _privateContacts.find((v) => v.friendUid === uid);
+              contact.isOnline = this.wsGateway.hasClientOnline(uid);
+
               return {
-                accountName,
-                nickName,
-                gender,
-                avatar,
-                uid,
                 unreadCount,
+                contact,
+                user: {
+                  accountName,
+                  nickName,
+                  gender,
+                  avatar,
+                  uid,
+                },
                 lastMsg,
               };
             }),
@@ -520,5 +532,108 @@ export class ChatService {
 
   unsubscribeChatRoom() {
     console.log('updateChatRoomInfo');
+  }
+
+  /**
+   * 获取私聊联系人的信息
+   * @param contactId
+   */
+  async getOneContactInfo({ contactId }) {
+    try {
+      const record = await this.contactModel.findOne({
+        attributes: {
+          exclude: ['deletedAt'],
+        },
+        where: {
+          contactId,
+        },
+        include: [
+          {
+            model: users,
+            attributes: ['accountName', 'nickName', 'gender', 'avatar', 'uid'],
+          },
+          {
+            model: chatRoom,
+            attributes: {
+              exclude: ['deletedAt'],
+            },
+          },
+        ],
+      });
+
+      return {
+        code: 0,
+        message: 'success',
+        data: record,
+      };
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  }
+
+  async getUserContactList(uid: string) {
+    try {
+      const record = await this.contactModel.findAll({
+        attributes: {
+          exclude: ['deletedAt'],
+        },
+        where: {
+          uid,
+        },
+        include: [
+          {
+            model: chatRoom,
+            attributes: {
+              exclude: ['deletedAt'],
+            },
+          },
+          {
+            model: users,
+            attributes: ['accountName', 'nickName', 'gender', 'avatar', 'uid'],
+          },
+        ],
+      });
+
+      const data = JSON.parse(JSON.stringify(record)).map((item) => {
+        const { user, type } = item;
+        item.isOnline =
+          type === 1 ? true : this.wsGateway.hasClientOnline(user?.uid);
+        return item;
+      });
+      return {
+        code: 0,
+        msg: 'success',
+        data,
+      };
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  }
+
+  async getOnlineContactId(uid: string) {
+    try {
+      const record = await this.contactModel.findAll({
+        attributes: {
+          include: ['contactId'],
+        },
+        where: {
+          uid,
+          type: 0,
+        },
+      });
+
+      return {
+        code: 0,
+        msg: 'success',
+        data: record
+          .filter((v) => this.wsGateway.hasClientOnline(v.uid))
+          .map((v) => v.contactId),
+      };
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
   }
 }

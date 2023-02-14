@@ -86,10 +86,38 @@ export class ChatController {
     return await this.chatService.getContectGroups(user.uid);
   }
 
-  @ApiOperation({ summary: '获取联系人分组列表' })
+  @ApiOperation({ summary: '获取未读记录' })
   @UseGuards(AuthGuard('jwt'))
   @Get('unread-record')
   async getUnreadChatRecords(@User() user: UserTokenSign) {
     return await this.chatService.getUnreadChatRecords(user.uid);
+  }
+
+  @ApiOperation({ summary: '获取联系人分组列表' })
+  @UseGuards(AuthGuard('jwt'))
+  @Post('contact-info')
+  async getOnePrivateContactInfo(@Body() data) {
+    return await this.chatService.getOneContactInfo(data);
+  }
+
+  @ApiOperation({ summary: '获取聊天室信息' })
+  @UseGuards(AuthGuard('jwt'))
+  @Post('chat-room')
+  async getChatRoomInfo(@Body() data) {
+    return await this.chatService.getChatRoomInfo(data.chatId);
+  }
+
+  @ApiOperation({ summary: '获取全部联系人信息（个人&群）' })
+  @UseGuards(AuthGuard('jwt'))
+  @Get('contact/list')
+  async getUserContactList(@User() { uid }: UserTokenSign) {
+    return await this.chatService.getUserContactList(uid);
+  }
+
+  @ApiOperation({ summary: '获取在线联系人列表' })
+  @UseGuards(AuthGuard('jwt'))
+  @Get('contact/online')
+  async getOnlineContactId(@User() { uid }: UserTokenSign) {
+    return await this.chatService.getOnlineContactId(uid);
   }
 }
