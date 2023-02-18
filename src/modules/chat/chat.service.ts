@@ -296,6 +296,12 @@ export class ChatService {
         where: {
           chatId,
         },
+        include: [
+          {
+            model: users,
+            attributes: ['accountName', 'nickName', 'gender', 'avatar', 'uid'],
+          },
+        ],
       });
 
       return {
@@ -628,7 +634,7 @@ export class ChatService {
         code: 0,
         msg: 'success',
         data: record
-          .filter((v) => this.wsGateway.hasClientOnline(v.uid))
+          .filter((v) => this.wsGateway.hasClientOnline(v.friendUid))
           .map((v) => v.contactId),
       };
     } catch (error) {

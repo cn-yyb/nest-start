@@ -7,9 +7,11 @@ import {
   Sequelize,
   ForeignKey,
   HasMany,
+  BelongsTo,
 } from 'sequelize-typescript';
 import { contact } from './contact';
 import { message } from './message';
+import { users } from './users';
 
 export interface chatRoomAttributes {
   chatId?: number;
@@ -53,6 +55,7 @@ export class chatRoom
   })
   chatAvatar?: string;
 
+  @ForeignKey(() => users)
   @Column({
     allowNull: true,
     type: DataType.CHAR(36),
@@ -82,4 +85,7 @@ export class chatRoom
 
   @HasMany(() => message, { sourceKey: 'chatId' })
   messages?: message[];
+
+  @BelongsTo(() => users, { targetKey: 'uid', foreignKey: 'owner' })
+  ownerInfo?: users;
 }

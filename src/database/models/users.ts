@@ -8,6 +8,7 @@ import {
   Sequelize,
   HasMany,
 } from 'sequelize-typescript';
+import { chatRoom } from './chatRoom';
 import { contact } from './contact';
 import { contactGroup } from './contactGroup';
 import { message } from './message';
@@ -175,4 +176,7 @@ export class users
 
   @HasMany(() => userBlacklist, { sourceKey: 'uid' })
   userBlacklists?: userBlacklist[];
+
+  @HasMany(() => chatRoom, { sourceKey: 'uid' })
+  chatRooms?: chatRoom[];
 }
